@@ -2,8 +2,8 @@
 # Keep the tags intact
 
 <param-style>
-- Noir
-- Psychological Thriller
+- Noir 
+- Psychological Thriller 
 </param-style>
 
 <param-world>
@@ -22,7 +22,7 @@ A secretive organization that upholds traditions and masquerades to maintain con
 - The Sabbat:
 Embraces chaos and rejects the Camarilla's authority. They see themselves as warriors against the oppressive structure of the Camarilla, valuing freedom and primal instincts over order and tradition. The Sabbat engages in more brutal and open practices, often considering humanity a weakness to be transcended rather than protected.
 
-- The Clans:
+The Clans:
 - Brujah: Rebels and thinkers, known for their passion and fervor,
 - Gangrel: Wild and primal, they have a connection to the beast within,
 - Nosferatu: Hideous and stealthy, they excel in espionage and information gathering,
@@ -68,7 +68,7 @@ Preferred by: Tremere
 </param-rules>
 
 <param-player>
-- Name: Selene 'The Moonbeam' of Aquitaine 
+Selene 'The Moonbeam' of Aquitaine:
 - 3rd generation
 - Clan Malkavian
 - Curse of Malkav: 

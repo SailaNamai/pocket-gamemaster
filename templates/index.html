@@ -15,7 +15,7 @@
       <div class="header-row">
         <div class="header-title">
             <img src="{{ url_for('static', filename='favicon.png') }}" alt="" class="title-favicon">
-            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 4.04.20251007)</small>
+            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 4.06.20251007)</small>
         </div>
             {% include 'settings-modal.html' %}
             {% include 'delete-modal.html' %}
@@ -114,11 +114,11 @@
       </div>
       <div class="tab-panel" id="panel-style">
         <textarea id="param-style" class="rpgui-input" rows="6"
-          placeholder="(Will be added as system prompt.)&#10;Keep short and precise.&#10;Use Descriptors like this:&#10;Tone:&#10;Cold and brutal."></textarea>
+          placeholder="(Will be added as system prompt.)&#10;Keep short and precise.&#10;Like this:&#10;- Noir&#10;- Dark Fantasy"></textarea>
       </div>
       <div class="tab-panel" id="panel-world">
         <textarea id="param-world" class="rpgui-input" rows="6"
-          placeholder="Describe your world…"></textarea>
+          placeholder="Describe your world.&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
       </div>
       <div class="tab-panel" id="panel-rules">
         <textarea id="param-rules" class="rpgui-input" rows="6"
@@ -126,11 +126,11 @@
       </div>
       <div class="tab-panel" id="panel-player">
         <textarea id="param-player" class="rpgui-input" rows="6"
-          placeholder="Describe your PC:&#10;I play as Quasimodo, an ugly yet surprisingly agile creature.&#10;The LLM expects you to define your equipment:&#10;I use sword and shield. My shield, shield-o-matic, is a rare artifact."></textarea>
+          placeholder="Describe your PC:&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
       </div>
       <div class="tab-panel" id="panel-characters">
         <textarea id="param-characters" class="rpgui-input" rows="6"
-          placeholder="List key NPCs…&#10;Keep short.&#10;Haven't played around with this yet.&#10;"></textarea>
+          placeholder="List key NPCs.&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
       </div>
 
     </div>

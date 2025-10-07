@@ -5,11 +5,10 @@
 It is designed to extend context length as far as I can push it. It is beta and there is still some potential left but currently PGM achieves (~6-10):1 compression ratios and then selects salient memories.
 It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
 Let's unpack that ;)
----
+
 ## - Installation
-Navigate/create a folder at .../pgm and open in terminal:
 ```console
-git clone https://github.com/SailaNamai/pocket-gamemaster.git
+git clone https://github.com/SailaNamai/pocket-gamemaster.git pgm
 ```
 Find extensive install instructions at
 ```console

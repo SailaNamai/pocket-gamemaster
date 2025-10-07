@@ -63,7 +63,7 @@ Clothing style:
 </param-rules>
 
 <param-player>
-- Name: Mierin Eronaile
+Mierin Eronaile:
 - 22 year old blonde woman
 - Born the daughter of a minor merchant in Tear, where she helped with the family business until her talent as a channeler was discovered. 
 - Wears a subtle braid on each side of her head and tucks the remaining hair into a ponytail. 

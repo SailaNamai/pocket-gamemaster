@@ -1,17 +1,7 @@
 
 ##### Important
-## 1: (solved)
-
-## 2: (do) tag json looks solid now
-# Note: When the json was broken it was easy to filter out player from character... now that it gets it right i need to think about determining who the player is... that skews the rating - always present.
-- location: disallow partial scoring for unknown, abandoned? - that kind of fluff
-- filter any "(text)" from character tags
-- tag recent has no player tag wrap
-
-## 3: (do) readme.md requires install instruction (git).
-I don't have a git account
-
-## 4: (do) Response length inflation - when the story grows?
+## 1: (improved - observing) 2nd person pov breaking
+## 1: Response length inflation - when the story grows?
 It begins reasonable but paragraphs on occassion begin to bust the 350 limit.
 Possible causes:
 - additional context it wants to incorporate
@@ -21,6 +11,31 @@ Possible solution:
 - Fall back to only taking the 1st paragraph - pacing issues
 - Revisit the whole 6 paragraph approach: Think about how the story would unfold in the next n paragraphs and then write the next one. - could work...
 - Re-feed the system prompt at the end (Remember: You are...) - feels dirty, would like to avoid, also ~100 tokens
+- merge with 1: (improved - observing) 2nd person pov breaking
+- PlayerAction-Tag taints the "prose" with perspective I vs you, different writing style
+- added explicit instruction to treat as data
+	- that should help alot with the drift on longer stories
+- I thinks its unreasonable to get all the LLM out of the writing but we are on a good way, I think.
+- should be much improved now
+- also took a huge deal of the "pompousness" out of the writing
+
+## 2: (do) tag json looks solid now
+# Note: When the json was broken it was easy to filter out player from character... 
+# Note: now that it gets it right i need to think about determining who the player is... that skews the rating - always present.
+- location: disallow partial scoring for unknown, abandoned? - that kind of fluff
+- filter any "(text)" from character tags
+- tag recent has no player tag wrap (solved)
+
+## 3: (do) Think about a reddit post
+- readme.md requires install instruction (git)
+- I don't have a git account
+- I do now - upload succesful
+
+## 4: (do) Github always builds at git name
+- which is unlike my documentation pgm vs pocket-gamemaster
+- which sucks
+- maybe github allows clone bla as ble
+- i feel stupid now
 
 ## 5: (solved) 
 

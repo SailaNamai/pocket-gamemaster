@@ -11,7 +11,8 @@ LOG_FILE = 'tag_recent.log'
 
 def get_prompts_tag_recent() -> Tuple[str, str]:
     """
-    Build (system_prompt, user_prompt) for the newest (highest id) paragraphs
+    Build (system_prompt, user_prompt) for the newest (highest id) paragraphs.
+    Paragraphs with story_id = 'continue_with_UserAction' are wrapped in <PlayerAction> tags.
     """
     log_path = LOG_DIR / LOG_FILE
 
@@ -62,7 +63,16 @@ def get_prompts_tag_recent() -> Tuple[str, str]:
     system_prompt = "\n\n".join(p for p in system_parts if p)
 
     # assemble user prompt (3 story_paragraph.content values)
-    user_parts = [row["content"] for row in rows if row["content"]]
+    user_parts = []
+    for row in rows:
+        content = row["content"]
+        if not content:
+            continue
+        if row["story_id"] == "continue_with_UserAction":
+            user_parts.append(f"<PlayerAction>{content}</PlayerAction>")
+        else:
+            user_parts.append(content)
+
     user_prompt = "\n\n".join(user_parts)
 
     # log prompts for debugging

@@ -6,7 +6,8 @@ from services.DB_access_pipeline import write_connection, connect
 app = Flask(__name__)
 
 # Send as system, send user defined as system
-# We do this to (hopefully) give the users writing style input more weight
+# We do this to give the users writing style input more weight
+# I know it doesn't look like it, but this prompt is massively complex
 def update_writing_style(user_value: str):
     hardcoded = """Writing style:
 Always refer to the player in the second person ("You..."):
@@ -15,15 +16,19 @@ Always refer to the player in the second person ("You..."):
     Bad examples:
     "{Player_Character} is being watched...",
     "As {Player_Character}, you are being watched...",
-    "You, as {Player_Character}, are being watched by...";
-Present tense; Consistent tone;
-Prefer short sentences - don't overdescribe;
-Use short observational beats to puncture the solemnity and show micro-actions.
+    "You, as {Player_Character}, are being watched...";
+Never use first person, even if <PlayerAction> is written that way;
+Treat <PlayerAction> as data, not prose;
+Present tense; 
+Consistent tone;
+Limit figurative language to at most one metaphor or simile per paragraph. 
+Favor concrete actions, gestures, and sensory details over abstract or symbolic phrasing. 
+Keep sentences varied but concise, avoiding long, winding structures. 
+Do not repeat imagery or motifs within the same passage. 
+Maintain atmosphere through implication and subtext rather than ornate description.
 Characters use direct speech when appropriate;
 Believable logically consistent world;
-Show don’t tell with vivid sensory details;
 True-to-character dialogue;
-Direct speech, when narratively appropriate;
 No "chosen one" player character;
 No meta or 4th-wall breaks;
 Forbidden expression: "The air is thick with" followed by an adjective like anticipation.
