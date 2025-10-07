@@ -1,0 +1,146 @@
+<!-- templates/delete-modal.html -->
+<div id="delete-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" aria-describedby="delete-modal-desc">
+  <div class="modal-backdrop" data-action="backdrop"></div>
+
+  <div class="modal-panel" role="document">
+    <h2 id="delete-modal-title" class="modal-title">Delete</h2>
+    <p id="delete-modal-desc" class="modal-body">Choose which delete action to perform. This cannot be undone.</p>
+
+    <div class="actions-grid">
+      <div class="card">
+        <h3>Delete Story</h3>
+        <p>Removes story and memories.</p>
+        <button id="confirm-delete_story" class="rpgui-button golden">Del Story</button>
+      </div>
+
+      <div class="card danger-card">
+        <h3>Delete All</h3>
+        <p>Empties all input fields.</p>
+        <button id="confirm-delete_all" class="rpgui-button golden">Del All</button>
+      </div>
+    </div>
+
+    <div class="modal-actions center">
+      <button data-action="close" class="rpgui-button" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+<style>
+/* Styles for this modal */
+.modal.hidden { display:none; }
+
+.modal.open { display:block; }
+
+.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.45); }
+
+.modal-panel { position:fixed; transform:translate(-50%,-50%); background:var(--bg-color); padding:1.25rem; border-radius:8px; width:min(520px,92%); z-index:1001; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center; /* center horizontally */
+  align-items: center;     /* center vertically if needed */
+  margin-top: 1rem;
+}
+
+#delete-modal strong {
+  font-size: 1.0rem;
+  font-weight: 600;
+  color: #ffd96b;
+  padding-top: 12px;
+  padding-bottom: 0.5rem;
+}
+#delete-modal p {
+  min-height: 3rem;
+}
+
+/* Center the whole panel and its text */
+.modal-panel {
+  left: 50%;
+  top: 27%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Center content inside each card and make actions align center */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  align-items: start;
+  justify-items: center; /* center each card horizontally in its grid cell */
+}
+
+/* Card body — center text and keep max-width for readability */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(255,255,255,0.02);
+  padding: 0.9rem;
+  border-radius: 8px;
+  max-width: 320px;
+  width: 100%;
+}
+
+/* Make the buttons centered within cards and visually balanced */
+.card .rpgui-button {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  min-width: 140px;
+}
+
+/* Footer cancel centered */
+.modal-actions.center {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Ensure good stacking on small screens while keeping centered alignment */
+@media (max-width: 640px) {
+  .actions-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .card { max-width: 520px; }
+}
+
+.modal-actions.center { display:flex; justify-content:center; margin-top:1rem; }
+@media (max-width:640px) {
+  .actions-grid { grid-template-columns:1fr; }
+}
+
+
+
+/* Style for index.html */
+/* Trash button (matches style of help-icon but inverted color) */
+#delete-button.trash-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  margin: 0 0px;
+  background: transparent;        /* transparent background instead of white */
+  border: none;
+  color: #d9413a;                 /* warm red for SVG stroke */
+  cursor: pointer;
+  border-radius: 0px;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+/* elevated buttons */
+#delete-button.trash-icon:hover {
+  transform: translateY(-1px);
+}
+
+/* Pressed state */
+#delete-button.trash-icon:active {
+  transform: translateY(0);
+}
+</style>

@@ -1,0 +1,272 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PGM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+
+<body class="rpgui-content">
+    <div class="rpgui-container framed">
+      <div class="header-row">
+        <div class="header-title">
+            <img src="{{ url_for('static', filename='favicon.png') }}" alt="" class="title-favicon">
+            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 4.04.20251007)</small>
+        </div>
+            {% include 'settings-modal.html' %}
+            {% include 'delete-modal.html' %}
+            {% include 'help-modal.html' %}
+            <button id="open-settings" class="settings-icon" aria-label="Open settings" title="Settings" type="button">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                </svg>
+            </button>
+            <button id="delete-button" class="trash-icon" aria-label="Delete" title="Delete" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M3 6h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button id="open-help" class="help-icon" aria-label="Open help" title="Help" type="button">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2 2.25-2.25 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M12 17h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <!-- Story History (Short Term Memory) -->
+    <div class="rpgui-container framed">
+        <div class="section-title">Story History (short term memory, editable)</div>
+        <div id="story-history" class="story-area" contenteditable="true" spellcheck="true">
+            <!-- Flask will inject here via .innerHTML -->
+        </div>
+        <small class="small-muted">
+          You may edit, delete, or rewrite any part of the story.
+        </small>
+    </div>
+
+    <!-- Player Action Input -->
+    <div style="margin-bottom:12px;">
+      <textarea id="player-action" class="rpgui-input" placeholder="(Optional) Your action, dialog, or decision here..." rows="2"></textarea>
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="rpgui-container framed-golden" style="margin-bottom:5px;">
+        <button class="rpgui-button golden" id="continue-btn">Continue</button>
+        <button class="rpgui-button" id="redo-btn">Re-Do</button>
+        <!-- <button class="rpgui-button golden" id="force-btn">Force</button> -->
+        <span id="status-indicator" style="margin-left:18px; font-size:1rem; color:#ffd96b;"></span>
+    </div>
+
+    <!-- Story Parameters as Radio-Driven Tabs -->
+    <div class="param-tabs">
+      <!-- Radio buttons (hidden) -->
+      <input type="radio" name="param-tab" id="param-tab-style"  checked>
+      <input type="radio" name="param-tab" id="param-tab-world">
+      <input type="radio" name="param-tab" id="param-tab-rules">
+      <input type="radio" name="param-tab" id="param-tab-player">
+      <input type="radio" name="param-tab" id="param-tab-characters">
+
+      <!-- Tab labels -->
+      <div class="tab-labels">
+          <div class="tab-labels-left">
+            <label for="param-tab-style">Writing Style</label>
+            <label for="param-tab-world">World Setting</label>
+            <label for="param-tab-rules">Rules</label>
+            <label for="param-tab-player">Player</label>
+            <label for="param-tab-characters">Characters</label>
+          </div>
+          <div class="tab-controls" role="group" aria-label="Parameter actions">
+            <button id="save-parameters" class="save-param-icon" aria-label="Save parameters" title="Save" type="button">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <path d="M17 21v-8H7v8"/>
+                  <rect x="7" y="3" width="7" height="6" rx="1"/>
+                </svg>
+            </button>
+            <button id="load-parameters" class="load-param-icon" aria-label="Load parameters" title="Load" type="button">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <path d="M7 10l5 5 5-5"/>
+                  <path d="M12 15V3"/>
+                </svg>
+            </button>
+              <div class="info-icon-parameter" tabindex="0" aria-describedby="tooltip-settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                  <path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2 2.25-2.25 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M12 17h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span class="tooltip-parameter" role="tooltip" id="tooltip-settings">
+                  <small class="small-muted">Load/save your settings. (Check .../pgm/story presets)<br><br>Parameter field syntax:<br>Use bullet point list:<br>Title:<br>- Definition1;<br>- Definition2; <br>- Definition3 with and clause;<br><br>Beginning and end of statements are clearly defined, logic operators like 'and' clearly connect two concepts.</small>
+                </span>
+              </div>
+          </div>
+      </div>
+      <div class="tab-panel" id="panel-style">
+        <textarea id="param-style" class="rpgui-input" rows="6"
+          placeholder="(Will be added as system prompt.)&#10;Keep short and precise.&#10;Use Descriptors like this:&#10;Tone:&#10;Cold and brutal."></textarea>
+      </div>
+      <div class="tab-panel" id="panel-world">
+        <textarea id="param-world" class="rpgui-input" rows="6"
+          placeholder="Describe your world…"></textarea>
+      </div>
+      <div class="tab-panel" id="panel-rules">
+        <textarea id="param-rules" class="rpgui-input" rows="6"
+          placeholder="The LLM is hardcoded to ignore raw values (just doesn't work right).&#10;Instead it derives stats, skills etc from context and memory.&#10;So don't write any rules like:&#10;Success of lock-picking is determined by a 1d6 roll + skill.&#10;Instead give general instructions:&#10;Lockpicking is hard!"></textarea>
+      </div>
+      <div class="tab-panel" id="panel-player">
+        <textarea id="param-player" class="rpgui-input" rows="6"
+          placeholder="Describe your PC:&#10;I play as Quasimodo, an ugly yet surprisingly agile creature.&#10;The LLM expects you to define your equipment:&#10;I use sword and shield. My shield, shield-o-matic, is a rare artifact."></textarea>
+      </div>
+      <div class="tab-panel" id="panel-characters">
+        <textarea id="param-characters" class="rpgui-input" rows="6"
+          placeholder="List key NPCs…&#10;Keep short.&#10;Haven't played around with this yet.&#10;"></textarea>
+      </div>
+
+    </div>
+
+    <!-- Mid- and long-term Memory tabs -->
+    <div class="memory-tabs">
+      <!-- Hidden radio buttons drive the tab state -->
+      <input type="radio" name="mem-tab" id="tab-mid"  checked hidden>
+      <label for="tab-mid" class="tab-label">Mid-Term</label>
+      <input type="radio" name="mem-tab" id="tab-long" hidden>
+      <label for="tab-long" class="tab-label">Long-Term</label>
+      <!-- text fields -->
+      <div class="mid-synopsis-area tab-panel" contenteditable="true" spellcheck="true">
+           <!-- Flask will inject here via .innerHTML -->
+      </div>
+      <div class="long-synopsis-area tab-panel" contenteditable="true" spellcheck="true">
+           <!-- Flask will inject here via .innerHTML -->
+      </div>
+    </div>
+
+    <div class="bottom-bar" aria-hidden="true"></div>
+
+    <!-- On text field update (story-history, mid- and long-synopsis-area) make a snapshot. -->
+    <script src="{{ url_for('static', filename='js/snapshot_backend.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snapshot_user.js') }}"></script>
+    <!-- Then create a candidate snapshot for push into DB -->
+    <script src="{{ url_for('static', filename='js/snapshot_candidate.js') }}"></script>
+    <!-- style story-history (adding custom spans) -->
+    <script src="{{ url_for('static', filename='js/style_story-history.js') }}"></script>
+    <!-- Load DB on first visit and save to local storage -->
+    <script src="{{ url_for('static', filename='js/load_db.js') }}"></script>
+    <script>window.Snapshot.notifyBackendUpdate('#story-history');</script>
+    <!-- On user edit: Pass Tab-Data to backend -->
+    <script src="{{ url_for('static', filename='js/tab_data.js') }}"></script>
+    <!-- On user button press: Do what they want -->
+    <script src="{{ url_for('static', filename='js/buttons.js') }}"></script>
+    <!-- On user action: clear input and write to story-history (should really be in buttons.js as well) -->
+    <script src="{{ url_for('static', filename='js/clear_user_action.js') }}"></script>
+    <!-- Wire in the save/load story parameter buttons -->
+    <script src="{{ url_for('static', filename='js/story_parameters_file.js') }}" defer></script>
+    <!-- load the *-modal.js -->
+    <script src="{{ url_for('static', filename='js/help-modal.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/delete-modal.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/settings-modal.js') }}" defer></script>
+
+    <!-- On load: scroll down story-history, memories -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Collect the scrollable areas
+      const scrollEls = [
+        document.getElementById('story-history'),
+        document.querySelector('.mid-synopsis-area'),
+        document.querySelector('.long-synopsis-area')
+      ].filter(Boolean);
+
+      // For each area: scroll to bottom on load and whenever new nodes appear
+      scrollEls.forEach(el => {
+        el.scrollTop = el.scrollHeight;
+
+        const observer = new MutationObserver(() => {
+          el.scrollTop = el.scrollHeight;
+        });
+        observer.observe(el, { childList: true, subtree: true });
+      });
+
+      // Ensure panels scroll down when you switch tabs
+      document.querySelectorAll('input[name="mem-tab"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          const panelSelector = radio.id === 'tab-mid'
+            ? '.mid-synopsis-area'
+            : '.long-synopsis-area';
+          const panel = document.querySelector(panelSelector);
+          if (panel) {
+            panel.scrollTop = panel.scrollHeight;
+          }
+        });
+      });
+    });
+    </script>
+
+    <!-- User action accepts enter -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('player-action');
+      if (!input) return;
+
+      // triggering the button click.
+      const triggerContinue = () => {
+        const continueBtn = document.getElementById('continue-btn');
+        if (continueBtn) continueBtn.click();
+      };
+
+      input.addEventListener('keydown', (e) => {
+        // Enter without Shift will submit; Shift+Enter allows a newline
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          triggerContinue();
+          // clear input if your workflow requires it
+          // input.value = '';
+        }
+      });
+    });
+    </script>
+
+    <!-- Disable/Enable spellcheck on story-history by focus -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const storyArea = document.getElementById("story-history");
+      if (!storyArea) return;
+
+      // start with spellcheck off
+      storyArea.setAttribute("spellcheck", "false");
+
+      storyArea.addEventListener("focus", function() {
+        storyArea.setAttribute("spellcheck", "true");
+        // force browser to re-check
+        storyArea.setAttribute("contenteditable", "false");
+        storyArea.setAttribute("contenteditable", "true");
+      });
+
+      storyArea.addEventListener("blur", function() {
+        storyArea.setAttribute("spellcheck", "false");
+        // force browser to drop underlines
+        storyArea.setAttribute("contenteditable", "false");
+        storyArea.setAttribute("contenteditable", "true");
+      });
+    });
+    </script>
+
+    <!-- Kill any snapshots the browser might have made on its own -->
+    <!-- Without this the page might load faster, but it'll also load stale data and potentially taint the DB -->
+    <script>
+    // This will fire when the page is being unloaded
+    window.addEventListener('unload', function () {
+      // The mere presence of this listener disables bfcache/session snapshotting.
+    });
+    </script>
+</body>
+</html>

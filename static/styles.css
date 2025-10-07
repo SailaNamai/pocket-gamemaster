@@ -1,0 +1,480 @@
+
+:root {
+  --bg-color: #0f1724;
+  --surface: #0f1618;
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --card-strong: rgba(255, 255, 255, 0.04);
+  --accent: #bfa77a;
+  --muted: #9aa3a6;
+  --text: #e8efe9;
+  --radius: 12px;
+  --glass-blur: 6px;
+  --max-width: 1100px;
+  --container-pad: 18px;
+  --ui-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow: 0 6px 18px rgba(6, 10, 12, 0.55);
+  --elevation: 0 8px 26px rgba(6, 10, 12, 0.5);
+}
+
+/* reset */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  font-family: var(--ui-font);
+  background: var(--bg-color);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 14px;
+
+}
+
+.memory-tabs {
+  border-radius: 4px;
+  padding: 0px;
+  min-height: 500px;
+}
+
+/* 1) Style your tab buttons */
+.tab-label {
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: 18px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+/* 1a) hover state */
+.tab-label:hover {
+  color: var(--text);
+}
+
+/* 2) Active tab indicator */
+#tab-mid:checked  ~ .tab-label[for="tab-mid"],
+#tab-long:checked ~ .tab-label[for="tab-long"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* 3) Hide all panels by default */
+.tab-panel {
+  display: none;
+  padding-top: 12px;
+}
+
+/* 4) Show the selected panel */
+#tab-mid:checked  ~ .mid-synopsis-area  { display: block; }
+#tab-long:checked ~ .long-synopsis-area { display: block; }
+
+/* 5) text field */
+.long-synopsis-area, .mid-synopsis-area {
+  background: rgba(191,167,122,0.04);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 18px;
+  color: var(--text);
+  backdrop-filter: blur(var(--glass-blur));
+  font-size: 1rem;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  min-height: 530px;
+  max-height: 530px;
+  overflow: auto;
+  /* optional */
+  max-width: 100%;
+  box-sizing: border-box;/* include padding in height calculation */
+}
+
+.bottom-bar {
+  width: 100%;
+  height: 42px;
+}
+
+/* text styling in story-history */
+.speech {
+    color: lightskyblue;
+}
+.user-action {
+    color: orange;
+}
+
+/* container */
+.rpgui-content { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: var(--container-pad); display: block; gap: 16px; }
+
+/* headings */
+.section-title {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  margin: 6px 0 10px 0;
+  display: inline-block;
+  background: linear-gradient(90deg, rgba(191, 167, 122, 0.06), transparent 40%);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.title-favicon {
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  display:inline-block;
+  object-fit:contain;
+  vertical-align:middle;
+}
+
+/* cards */
+.rpgui-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.framed-grey { background: var(--surface); }
+.framed { background: var(--card-bg); }
+.framed-golden { background: var(--card-strong); }
+
+/* inputs */
+.field-label { display: block; font-weight: 700; color: var(--muted); font-size: 0.95rem; margin: 8px 0 6px 0; letter-spacing: 0.03em; }
+
+.rpgui-input {
+  display: block;
+  width: 100%;
+  margin: 0 auto;     /* centers horizontally */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.075);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: var(--ui-font);
+  outline: none;
+  min-height: 2rem;      /* fallback height */
+  resize: none;      /* allow vertical resize only; use none to disable */
+  padding: 0.5rem;       /* adjust to match input look */
+  transition: box-shadow .12s ease, border-color .12s ease;
+}
+.rpgui-input:focus {
+  box-shadow: 0 8px 24px rgba(80, 120, 140, 0.06);
+  border-color: rgba(140, 160, 140, 0.12);
+}
+
+/* buttons */
+.rpgui-button, .rpgui-button.golden {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  padding: 9px 16px;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.rpgui-button {
+  color: #0b0a07;
+  background: linear-gradient(180deg, #d7c9ab, #cdbf98);
+  box-shadow: 0 6px 14px rgba(12, 16, 18, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  margin-right: 5px;
+}
+.rpgui-button.golden {
+  color: #0b0a07;
+  background: linear-gradient(180deg, #c9a86f, #b8905a);
+  box-shadow: 0 6px 18px rgba(185, 145, 90, 0.12);
+  margin-right: 5px;
+}
+.rpgui-button:hover { transform: translateY(-1px); box-shadow: var(--elevation); }
+.rpgui-button:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(0,0,0,0.35); }
+
+/* story area */
+.story-area {
+  background: rgba(255,255,255,0.008);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 18px;
+  min-height: 500px;
+  max-height: 500px;
+  overflow: auto;
+  color: var(--text);
+  backdrop-filter: blur(var(--glass-blur));
+  font-size: 1rem;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+.small-muted { color: var(--muted); font-size: 0.88rem; }
+
+/* Tabs */
+/* base tab look (same as .tab-label) */
+.tab-nav li {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  background: none;
+}
+
+/* hover state */
+.tab-nav li:hover {
+  color: var(--text);
+}
+
+/* active state (same accent, bold weight) */
+.tab-nav li.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: bold;
+  background: none;  /* remove any leftover background */
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Accordion */
+details {
+  background: var(--card-bg);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 8px 16px 12px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+details summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+}
+details summary::-webkit-details-marker { display: none; }
+details[open] summary { color: var(--accent); }
+details summary:hover { color: var(--text); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  :root { --max-width: 900px; }
+  .rpgui-content { padding: 14px; }
+  .story-area { padding: 14px; font-size: 0.98rem; min-height: 260px; }
+  .rpgui-button { padding: 9px 12px; font-size: 0.95rem; }
+}
+@media (max-width: 520px) {
+  .section-title { font-size: 0.95rem; }
+}
+
+/* 1) Hide the radios */
+.param-tabs input[type="radio"] {
+  display: none;
+}
+
+/* 2) Style the tab labels */
+.param-tabs .tab-labels label {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.param-tabs .tab-labels label:hover {
+  color: var(--text);
+}
+
+/* 3) Active tab indicator */
+#param-tab-style:checked   ~ .tab-labels label[for="param-tab-style"],
+#param-tab-world:checked   ~ .tab-labels label[for="param-tab-world"],
+#param-tab-rules:checked   ~ .tab-labels label[for="param-tab-rules"],
+#param-tab-player:checked  ~ .tab-labels label[for="param-tab-player"],
+#param-tab-characters:checked
+                           ~ .tab-labels label[for="param-tab-characters"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* 4) Hide all panels by default */
+.param-tabs .tab-panel {
+  display: none;
+  padding-top: 12px;
+}
+
+/* 5) Show the selected panel */
+#param-tab-style:checked   ~ #panel-style,
+#param-tab-world:checked   ~ #panel-world,
+#param-tab-rules:checked   ~ #panel-rules,
+#param-tab-player:checked  ~ #panel-player,
+#param-tab-characters:checked
+                           ~ #panel-characters {
+  display: block;
+}
+
+/* Only allow vertical (y-axis) resizing on story-parameter text-areas */
+.param-tabs textarea,
+.param-tabs .rpgui-input {
+  resize: vertical;    /* disable horizontal resizing */
+  max-width: 100%;     /* prevent them growing wider than their container */
+  min-height: 264px;
+}
+/* icon styles: load & save */
+.save-param-icon, .load-param-icon {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+}
+/* icon styles: load & save hover */
+.save-param-icon:hover, .load-param-icon:hover {
+  transform: translateY(-1px);
+  color: var(--accent);
+}
+/* make labels + controls a single row */
+.param-tabs .tab-labels {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+/* left group keeps labels together */
+.param-tabs .tab-labels-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* right group pushes to the far right */
+.param-tabs .tab-controls {
+  display: flex;
+  align-items: center;
+  margin-left: auto;        /* the key: pushes this group to right */
+}
+
+/* ensure wide label group doesn't shrink away */
+.param-tabs .tab-labels-left {
+  flex: 0 1 auto;           /* allow wrapping but don't force collapse */
+}
+
+/* controls keep fixed size and remain aligned */
+.param-tabs .tab-controls .save-param-icon,
+.param-tabs .tab-controls .load-param-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+
+/* layout for the header row only */
+.rpgui-container.framed > .header-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* align items left */
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* keep title centered visually while using flex (if you want the title centered inside the full container) */
+.rpgui-container.framed > .header-row .header-title {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #bfa77a;
+}
+
+/* Help icon styles (only within the header-row) */
+.rpgui-container.framed > .header-row .help-icon {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+}
+
+/* Hover / focus affordances (only for this help icon) */
+.rpgui-container.framed > .header-row .help-icon:hover {
+  transform: translateY(-1px);
+  color: var(--accent);
+}
+
+.header-title strong {
+font-size: 1.1rem;
+font-weight: 800;
+color: #cfd3bd;
+padding-top: 12px;
+padding-bottom: 0.5rem;
+}
+
+.rpgui-input:focus, input:focus, .story-area:focus, .long-synopsis-area:focus, .mid-synopsis-area:focus {
+  border-color: rgba(140, 160, 140, 0.12);
+  box-shadow: 0 8px 24px rgba(80, 120, 140, 0.06);
+  outline: none;
+}
+
+.info-icon-parameter {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 16px;
+}
+.info-icon-parameter:hover {
+  transform: translateY(-1px);
+  color: var(--accent);
+}
+.tooltip-parameter {
+  position: absolute;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(51, 51, 51, 0.9); /* Slight transparency for depth */
+  color: #fff;
+  padding: 8px 12px; /* Increased padding */
+  border-radius: 6px;  /* Slightly larger border radius */
+  font-size: 0.9rem;  /* Slightly larger font size */
+  white-space: normal;
+  min-width: 300px;
+  max-width: 512px;
+  line-height: 1.5;  /* Increased line height for readability */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+  border: 1px solid #777; /* Subtle border for definition */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out; /* Smooth transition */
+  z-index: 10;
+}
+
+
+
+.info-icon-parameter:hover .tooltip-parameter,
+.info-icon-parameter:focus .tooltip-parameter {
+  opacity: 1; /* Show the tooltip on hover or focus */
+  transform: translateX(-50%) translateY(-5px); /* Slight upward movement */
+}
+

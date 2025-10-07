@@ -1,0 +1,463 @@
+<!-- documentation.html -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PGM Help</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div class="app" role="application">
+  <header class="topbar">
+    <div class="brand">
+      <img src="favicon.png" width="56" height="56">
+      <div>
+        <div class="title"><span class="goldify">P</span>ocket <span class="goldify">G</span>ame<span class="goldify">M</span>aster Help & Documentation
+        <!-- <div class="muted" style="font-size:0.85rem">TEXT</div> -->
+      </div>
+    </div></div>
+  </header>
+
+  <section class="tabs">
+    <div class="tab-row">
+      <!-- Hidden radios control which tab panel is active; labels styled above -->
+      <input type="radio" name="content-tab" id="install" checked hidden>
+      <label for="install" class="tab-label">Installation</label>
+      <input type="radio" name="content-tab" id="prompts" hidden>
+      <label for="prompts" class="tab-label">Prompts</label>
+      <input type="radio" name="content-tab" id="issue" hidden>
+      <label for="issue" class="tab-label">Known issues</label>
+    </div>
+
+    <!-- Short info dump -->
+    <div id="install-panel" class="tab-panel" contenteditable="false" spellcheck="true">
+      <span class="muted"><span class="goldify2">source .venv/bin/activate</span><br>
+      <span class="goldify2">python app.py</span><br>
+      <span class="goldify2">127.0.0.1:5000</span>
+      </span>
+    </div>
+    <div id="prompt-panel" class="tab-panel" contenteditable="false" spellcheck="true">
+      <span class="muted"><span class="goldify2">"Prompts"</span> are in .../pgm/services/prompts_*.py<br></span>
+    </div>
+    <div id="issue-panel" class="tab-panel" contenteditable="false" spellcheck="true">
+      <p class="muted">Known issues helper: Writing in progress</p>
+    </div>
+  </section>
+
+  <main class="main-split" role="main">
+
+    <!-- Left navigation specific to active tab -->
+    <aside class="nav-card" id="navCard">
+      <div class="nav-heading" id="navHeading">Installation:</div>
+
+      <div class="nav-list" id="navList">
+        <!-- Installation nav list -->
+        <div class="nav-sublist" data-tab="install">
+          <div class="nav-item active" data-target="#install-step1-card">Pocket GameMaster</div>
+          <div class="nav-item" data-target="#install-step5-card">Setup</div>
+          <div class="nav-item" data-target="#install-step2-card">CUDA</div>
+          <div class="nav-item" data-target="#install-step3-card">llama.cpp</div>
+          <div class="nav-item" data-target="#install-step4-card">Python</div>
+        </div>
+
+        <!-- Prompt adjustment nav list -->
+        <div class="nav-sublist" data-tab="prompts">
+          <div class="nav-item" data-target="#prompts-step1-card">Change prompts</div>
+          <div class="nav-item" data-target="#prompts-step2-card">System</div>
+          <div class="nav-item" data-target="#prompts-step3-card">Parameter</div>
+          <div class="nav-item" data-target="#prompts-step4-card">From Action</div>
+        </div>
+
+        <!-- Known issues nav list -->
+        <div class="nav-sublist" data-tab="issue">
+          <div class="nav-item" data-target="#issue-step1-card">Don't fix?</div>
+          <div class="nav-item" data-target="#issue-step2-card">Important</div>
+          <div class="nav-item" data-target="#issue-step3-card">Minor Bugs</div>
+        </div>
+      </div>
+    </aside>
+
+
+    <!-- Right side content -->
+    <section class="content-card">
+      <h2 class="content-title" id="contentTitle"></h2>
+      <div class="content-body" id="contentBody" contenteditable="false" spellcheck="true"></div>
+    </section>
+
+    <!-- hidden content repository -->
+    <div id="content-repo" style="display:none">
+      <!-- Installation cards -->
+      <div id="install-step1-card" class="repo-card" data-tab="install">
+PGM is a free, open source, locally run, text based, multi-personality LLM powered RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
+
+It is designed to extend context length as far as I can push it (its beta and there is still some potential left). It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
+
+Let's unpack that ;)
+
+Locally run:
+It doesn't need an internet connection. It doesn't communicate with anything and everything is stored locally.
+
+Text based, LLM powered:
+Pretty self-explanatory. The LLM is "abliterated" - meaning you should never see:
+"As an LLM I'm not able to continue this conversation."
+
+Human-like memory:
+When we continue the story we feed the LLM as much context as possible:
+First the detailed, "raw" story (what you read). After a while the raw story is summarized from player action to (but not including) the next player action. These mid-term memories mean we remember what's important: What you did and what happened because of it. Mid-term memories are eventually condensed further into long-term memories. Long term memories are selectively chosen by relevance and weighed, assembled into chronological order and given to the LLM.
+The "memory" part of the prompt looks like:
+<div class="code-indent"><code>These are the relevant long-term facts:
+These are the mid-story events:
+This is what happened recently:</code></div>
+"Multiple personalities":
+The LLM is (possibly) prompted a total of five times per "generation" for
+<div class="code-indent"><code>generate (new, with and without player action),
+summarize from player action,
+create tags for that player action,
+summarize mid-term memories,
+create tags for the most recent story.</code></div>
+In order to achieve that we let a stage director persona react to player actions, a journalist write the summaries, etc.
+
+Delete/Edit/Add:
+Any change you make in the story history, long- and mid-term memories (over)writes to the DB.
+It's pushed when you take an action, before that you can revert with CTRL+Z or F5.
+
+I've put the "hard-coded" stuff into .../pgm/services/prompts_*.py
+Making a change here is as simple as modifying a text document (requires app.py to be re-run).
+
+Settings are in services/llm_config.py - I've also added a lot of commentary.<br><br>
+      </div>
+      <div id="install-step5-card" class="repo-card" data-tab="install">
+Explanation of Q and why shortening context might be worth?
+Read the excerpt below.
+
+Download the model variant and place in .../pgm
+Q8_0 (full context requires 16gb VRAM, 12gb might get away with 6k context)
+<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q8_0.gguf</code></div>
+Choose Q6 for mid-range PC (12gb should comfortably do full context):
+<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q6_K.gguf</code></div>
+Q4 if you are on a potato based system (8gb VRAM should handle full context):
+<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q4_K_M.gguf</code></div>
+The quick and dirty "fix" is to rename whichever model you chose to
+<div class="code-indent"><code>NeuralDaredevil-8B-abliterated-Q8_0.gguf</code></div>
+Otherwise change
+<div class="code-indent"><code>.../pgm/services/llm_config.py
+MODEL_PATH
+(comment and uncomment lines accordingly)</code></div>
+Proceed to the next step. Don't skip anything until you've verified success.
+
+Excerpt on Q:
+When Picard... Ok, so Q is like different lenses for the model, with lower Q's making the model less accurate. There is the FP (full precision) model and then people make the Q's to make them smaller (needing less hardware).
+The process isn't bad at all and on average okay, the issue comes from how "far off" the worst off tokens are. Perplexity (ppl) score is how "confused" the model is about the next token relative to the FP variant. Think of a token as the next word, ppl then becomes how "confused" the model is about the next word.
+
+A score of 0 would be equal to the FP model.
+Examples:
+- Q8_0 = 0.0004 ppl
+- Q6_K = 0.0044 ppl (Factor of 11)
+- Q4_K_M = 0.0535 ppl (Factor of 100+)
+Guides etc. will say that the Q4_K_M ppl is still very low and that's true, but it's an average.
+
+If we look at KL (a more complex measure for ppl) and the worst effected tokens we get:
+(Q-Variant = Single worst token, top 5% of worst tokens):
+- Q8_0 = 0.003536, 0.002340
+- Q6_K = 0.030619, 0.009526 (Factor of ~9, ~4)
+- Q4_K_M = 0.125153, 0.061090 (Factor of ~35, ~26)
+
+So, the higher our divergence number (el psy kongroo) the more likely we are to encounter an "AI blip" - that moment when you think: WTF? That might be okay for a basic chatbot where conversations are short and nothing is retained beyond the immediate context... But for long term story/prose the effect is critical, because these "blips" tend to influence the narrative disproportionately. (The player might react weird, the following narrative needs to conform around this odd token.)
+That means these "tainted" tokens can infect otherwise healthy new tokens and lower the total quality drastically (error propagation).
+
+TLDR,WTH: If your hardware can support it opt for the Q8_0, even if you might have to lower context length and guides tell you that Q4 is okay.
+      </div>
+      <div id="install-step2-card" class="repo-card" data-tab="install">
+
+This should be pretty straight forward.
+Confirm your GPU supports it - otherwise skip ahead.
+<div class="code-indent"><code>lspci | grep -i nvidia
+then reference with:
+https://developer.nvidia.com/cuda-gpus</code></div>
+Nvidia provides an (extensive) guide - you can search for simpler guides or ask GPT.
+<div class="code-indent"><code>https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html</code></div>
+Ask GPT/use a search engine if anything comes up.
+
+<div class="code-indent"><code>Tips:
+Guides might contain something like:
+Write to .bashrc
+export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
+
+Note that this is version sensitive (as of writing newest is 13.n) and guides rarely tell you to change it accordingly.
+
+Latest CUDA requires the latest/matching nvidia driver.
+Not every distro will automatically activate the latest drivers (even if it downloads them for you).</code></div>
+Check success with
+<div class="code-indent"><code>nvcc --version</code></div>
+      </div>
+      <div id="install-step3-card" class="repo-card" data-tab="install">
+
+This was a little finicky, but I don't remember why... (sorry).
+
+You want to make with these (additional) arguments:
+<div class="code-indent"><code>-DGGML_CUDA=ON
+-Dllama_CONTEXT_LENGTH=8192</code></div>
+Omit the CUDA argument if your hardware doesn't support it.
+It's fine to build with the models max context length, even if your hardware can't handle it. In any case we don't want to default to 4k context and define context length later ourselves.
+
+Build at
+<div class="code-indent"><code>.../pgm/llama.cpp</code></div>
+or adjust the path to your llama.cpp in
+<div class="code-indent"><code>.../pgm/services_llm.config.py (Config.LLAMA_CLI)</code></div>
+(There are pre-built versions available, but I didn't test any.)
+
+You'll need:
+CMake >= 3.22
+<div class="code-indent"><code>sudo apt update
+sudo apt install cmake</code></div>
+GCC
+<div class="code-indent"><code>sudo apt install build-essential</code></div>
+Verify with:
+<div class="code-indent"><code>cmake --version
+gcc --version</code></div>
+Go to .../pgm and open in terminal.
+<div class="code-indent"><code>git clone https://github.com/ggerganov/llama.cpp.git
+cd llama.cpp
+git submodule update --init --recursive</code></div>
+If you installed CUDA and nvcc works (try nvcc --version), you can skip this. If it doesn't work, try:
+<div class="code-indent"><code>export CUDACXX=/usr/local/cuda/bin/nvcc</code></div>
+Then build with
+<div class="code-indent"><code>mkdir -p build && cd build
+cmake .. -DGGML_CUDA=ON -Dllama_CONTEXT_LENGTH=8192 -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)</code></div>
+If it fails paste the error to GPT.
+
+If you run ./build/bin/llama-cli and get an error like libcudart.so.12: cannot open shared object file, then add this to your .bashrc:
+<div class="code-indent"><code>echo 'export LD_LIBRARY_PATH="/PATH/TO/pgm/llama.cpp/build/bin:$LD_LIBRARY_PATH"' >> ~/.bashrc
+source ~/.bashrc
+</code></div>
+Once installed (from pgm/llama.cpp) in your terminal do (adjust path):
+<div class="code-indent"><code>./build/bin/llama-cli \
+     -m ABSOLUTE_PATH_TO_MODEL/NeuralDaredevil-8B-abliterated-Q8_0.gguf \
+     --ctx-size 8192 \
+     --threads 16 \
+     --gpu-layers 32 \
+     --temp 0.9 \
+     --top-p 0.8 \
+     --repeat-penalty 1.1 \
+     --frequency-penalty 1.03 \
+     --presence-penalty 0.0 \
+     --chat-template-file ~/pgm/llama3_chat.jinja \
+     --system-prompt "System here." \
+     --prompt         "User here."</code></div>
+You should get an output like:
+<div class="code-indent"><code>...
+system
+System here.
+user
+User here.
+assistant
+I'm glad we're connected! What brings you to this conversation today? Do you have a specific topic in mind or would you like some suggestions on what we can chat about? I'm happy to assist with any questions, discuss various subjects, or just engage in a fun exchange of ideas. Let me know how I can help make our time together enjoyable and productive!
+...</code></div>
+(CTRL+C ends the conversation).
+
+Once you can talk with the model you are set.<br><br>
+      </div>
+      <div id="install-step4-card" class="repo-card" data-tab="install">
+
+Create a virtual environment (.venv) in .../pgm or use conda.
+<div class="code-indent"><code>python -m venv path/to/pgm/</code></div>
+Activate that environment (from .../pgm in terminal):
+<div class="code-indent"><code>source .venv/bin/activate</code></div>
+for conda its
+<div class="code-indent"><code>conda activate MyEnV</code></div>
+You'll need pip, flask and llama-cpp-python:
+<div class="code-indent"><code>sudo apt install pip
+pip install flask
+pip install llama-cpp-python (copy and paste an error to GPT)</code></div>
+From a terminal (still at .../pgm) and with active env (source .venv/bin/activate) do:
+<div class="code-indent"><code>python app.py</code></div>
+Leave it running in the background and in your browser open
+<div class="code-indent"><code>http://127.0.0.1:5000/</code></div>
+If you want to serve PGM to your local network (like if you want to play on your phone), open pgm/app.py and scroll all the way down.
+Replace the app.run(...) line with
+<div class="code-indent"><code>app.run(debug=True, port=5000, threaded=True, host='0.0.0.0')</code></div>
+Then start the app and access (for example) 192.168.1.123:5000 with a browser from another device.
+
+Click the cog (settings) and adjust:
+<div class="code-indent"><code>Token budget</code></div>
+Default is 6192. Max for model = 8192 (clamped to 8000) =should be fine with 16gb VRAM. You'll have to adjust this to your hardware (discuss with GPT) or just trial and error. If you go over what your hardware can handle the model will eventually crap out with OOM.
+Then adjust the values for
+<div class="code-indent"><code>"Raw" story
+Mid-term memories
+Long-term memories</code></div>
+Keep raw above 1000 (about 5 paragraphs), mid/long above 1500.
+Any "unspent" tokens are added to long.
+
+Click save and you can start :)
+      </div>
+
+      <!-- Prompt adjustment cards -->
+      <div id="prompts-step1-card" class="repo-card" data-tab="prompts">
+
+Essentially just open the corresponding file in an editor. (Might want to opt for one that can "read" python - makes it way more readable.)
+
+You can verify changes/inspect the entire prompt (after continue or re-do) in the logs:
+<div class="code-indent"><code>.../pgm/logs</code></div>
+You can count the tokens of any text by going to
+<div class="code-indent"><code>.../pgm/services/count_tokens</code></div>
+Open count_me.log, replace with text and save.
+Then do python count.py
+Prompt costs are also tracked in the DB (sqlite3 viewer, open in read-only).
+
+Don't change the tagging system unless you are prepared to get into tag evaluation code as well.
+(except as described in 'From Action')
+<div class="code-indent"><code>.../pgm/services/prompts_tagging_system.py</code></div>
+      </div>
+      <div id="prompts-step2-card" class="repo-card" data-tab="prompts">
+Open:
+<div class="code-indent"><code>.../pgm/services/prompts_system.py</code></div>
+You'll find functions like
+<div class="code-indent"><code>def continue_story_system_prompt():
+return """
+You are a continuity editor for a serialized novel.
+Continue the narrative from the last paragraphs without summarizing or reframing.
+Maintain tone, pacing, and character consistency as you move into the next scene.
+You write for a mature audience.
+Write 6 new paragraphs. Refer to the player in the second person ("you").
+You do not act for the player. You stop when a PlayerAction would be required.
+"""</code></div>
+Edit what is between the """...""".
+Save and rerun app.py (from .../pgm: python app.py)
+
+My research suggests that the "personality" based approach produces superior results,
+as opposed to something like: You are a story generation engine.
+That is because the job and personality descriptions have much more/better context available.
+Keep with that approach.
+Examples:
+<div class="code-indent"><code>You are Sigmund Freud, continuing a roleplay session with a client.
+You are a Stephen King, continuing a serialized horror novel.</code></div>
+      </div>
+      <div id="prompts-step3-card" class="repo-card" data-tab="prompts">
+Open:
+<div class="code-indent"><code>.../pgm/services/prompts_story_parameters.py</code></div>
+Pretty much the same. Find def update_* corresponding to what you want to change.
+
+Edit what is between the """...""".
+Save and rerun app.py (from .../pgm: python app.py)
+      </div>
+      <div id="prompts-step4-card" class="repo-card" data-tab="prompts">
+Open:
+<div class="code-indent"><code>.../pgm/services/prompts_summarize_from_player_action.py</code></div>
+Pretty much the same. Find def get_rules.
+
+Here you can change what is remembered and which priority certain events have.
+Making changes has potentially vast consequences on long story narrative but is hard to test.
+
+Edit what is between the """...""".
+
+Also carry any change you make to
+<div class="code-indent"><code>.../pgm/services/prompts_tagging_system.py</code></div>
+Find the importance level section and replace.
+
+Save and rerun app.py (from .../pgm: python app.py)
+      </div>
+
+      <!-- Issue cards -->
+      <div id="issue-step1-card" class="repo-card" data-tab="issue">
+- Insanely long user parameters will reduce long-term memory budget to 0.
+Might crap out with OOM, or worse, push the system prompts out of context.
+
+- LLM finishes with What will you do next?
+<div class="code-indent"><code>The woman's gaze drifts upwards from her feet, her eyes focusing on yours as she struggles to respond. A faint crease forms between her eyebrows as she winces in pain with each step, yet a spark of determination ignites within those sunken depths when you ask about finding help. "Not... much," she manages to stammer out, her voice hoarse and barely audible over the growing cacophony behind you both. "Main Street's all but abandoned... few scattered survivors here and there." She pauses, swallowing hard as a fresh wave of pain crosses her face before continuing in a low tone: "But I know someone who might be able to help us - my friend Marcus lives on Elm Street, just two blocks from here. He's got experience with the dead... if we can make it that far." As she finishes speaking, you glance back and see that the zombies are mere feet away now, their slow but relentless shamble a stark reminder of how little time you have to act. You spot a dumpster nearby, its metal lid askew - could it serve as an impromptu shield if needed? The alleyway's entrance beckons just ahead, promising potential shelter from the horde behind. What will you do next?</code></div>
+I think it's okay to let this slide, and it fits this example well.
+
+- (could be solved - observing)
+If the user clicks continue often the LLM will generate a player action to advance the narrative.
+Mostly its just putting questions or minor actions into a player tag. Narratively I think it would be okay under continue...
+DB doesn't reflect it as a player action and the summarize pipeline is capable of dealing with multiple player tags per slice...
+That means it'll just get summarized away and most likely tagged as medium...
+Could scrub the tag in the front end if it happens. Keep it as a crutch for the LLM...
+Might have to scrub in backend...
+<div class="code-indent"><code>PlayerActionI ask about Mrs. Jenkins./PlayerAction
+As the silence between Jed and Emily is broken by the crackling of the fire, Emily closes the cookbook and looks up at you with a soft expression.</code></div>
+Might even turn that into a proper action... Its correctly written in I, the paragraph still in you.
+I could cheat that in the front end... make two paragraphs out of it. p-data with player action.
+That should push it into the DB. I have no idea what happens when we add an id in between two ids like 50,51...
+That could be seriously annoying.
+Note: Gotta find out anyway, people might add paragraphs anywhere.
+Ok, so that inserts cleanly already - no issue then.
+If I leave the PlayerAction tag in the DB it'll propagate as allowed writing style inside a paragraph...
+Allow the behaviour, catch in front end, turn in two paragraphs, then push back to db
+(already overwrites changes - might have to check if the automated input is caught be the candidate dif calc or push won't fire)
+If the player is confronted with an action that he didn't take? ... yeah, no.
+Can scrub it and change 1st to 2nd person. You ask about Mrs. Jenkins. As the silence between...
+2nd person then gets passed as an edit to DB and removes the tag there.
+<div class="code-indent"><code>You stop when a PlayerAction.../PlayerAction would be required.</code></div> Its because of this part of the instruction.
+It thinks it can't continue without the needed action so it makes one. Removing it would have it overshoot again.
+It might not even think it needs a player action. It might just think it needs an action every 1 or 2 paragraphs because thats the structure I've been feeding it...
+Hm: <div class="code-indent"><code>You stop when a PlayerAction.../PlayerAction would be narratively required.</code></div>
+<div class="code-indent"><code>PlayerActionI watch them silently while they examine my supplies./PlayerAction As Jed and Emily continue to sort through the meager provisions I brought from Mrs. Jenkins' home, their quiet...</code></div>
+Ok - probably best to change the continue one (action can stay, because its always given an action...)
+<div class="code-indent"><code>You do not act for the player. You stop when a PlayerAction.../PlayerAction would be required.</code></div>
+Gotta be careful
+1: don't make it constantly advance the narrative with hallucinations, let the player decide.
+2: have it still stop writing when the player should act.
+You do not act for the player and stop when player input would be required.
+Might think about the entire system prompt. I have a writer thats not allowed to advance his book using the protagonist?
+Ok, changed prompt.
+      </div>
+      <div id="issue-step2-card" class="repo-card" data-tab="issue">
+1: (should be solved - observing)
+I think the tagging system change, adding very low to very high rating, was good and the weighting more realistic,
+but the code filters only high and very high importance. Might do another pass for mid now - eventually this
+becomes moot (when enough high/very high long term memories are available). Actually I'm not sure... we might fill up
+with any available memory in the last pass (Ate a space cookie... okay xD).
+Ok, so we don't even summarize importance medium. That could be an issue...
+Ok, medium is now summarized after high/very high - see how it goes (currently not evaluated for long commit).
+Added medium to evaluation. Very high first, then high, then medium. I think discarding low and very low entirely probably helps with overall narrative.
+
+2:
+- Still some issues with the tag json / might try lower temp a little more
+1st
+Actually, I think the LLM might not have enough context at times to establish proper tags.
+Its being given action - paragraph before action (one conditional excepted).
+Hm, that system is good - giving more context might destroy the direct action-effect relation.
+Could possibly feed it fitting long memories outside the sum_this tag and clearly label them as context aid...
+With a more complex prompt might come other issues (see step2) - not least token cost and computation times...
+2nd
+The json is sometimes still plain wrong - temp? or prompt?
+Ok - we srsly bumped the prompt. Let's observe how that goes.
+Ok, much better. We can now think about a serious tag eval system, I think, bump important.
+Discern more partial tag matches and give some tagging score.
+searching for supplies, rummaging for supplies etc...
+Ask the LLM to do it? No: calc time, result is guesswork and a bitch to actually debug
+I'll have to clean up that space cookie code...
+Refactor into a proper pipeline - revisit the cleaning functions...
+
+3:
+readme.md requires install instruction (git).
+
+4: (should be fixed - observing)
+Re-visiting the site doesn't seem to trigger DB load? Some load happened tho... (F5 required?)
+We load some "old data", meaning if the player doesn't notice it will be persisted to DB
+I think the issue is with the snapshot that browsers with session restore do...
+fix: delete bfcache/session snapshotting on page exit
+
+5:
+solved
+
+6: (better now)
+The settings modal is a little unclear on how it shows the "flex" tokens for long memories.
+And it doesn't tell that we auto-recalc new parameter costs from long.
+      </div>
+      <div id="issue-step3-card" class="repo-card" data-tab="issue">
+
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="documentation.js"></script>
+</body>
+</html>

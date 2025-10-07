@@ -1,0 +1,179 @@
+<!-- settings-modal.html -->
+<div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+  <div class="modal-backdrop" data-action="close"></div>
+
+  <div class="settings-modal-panel" role="document">
+    <header class="modal-header">
+      <h2 id="settings-title">Token budget settings</h2>
+      <div class="info-icon-settings" tabindex="0" aria-describedby="tooltip-settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2 2.25-2.25 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M12 17h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="tooltip-settings" role="tooltip" id="tooltip-settings">
+          <small class="small-muted">For Q8_0 (downgrade model if on potato).<br><br>- Insane request? Your entered parameters (World,...) are longer than these (valid) settings would allow: Try lowering long budget<br>- Long budget is receiving the "unused" tokens from parameters (Writing Style, ...).<br>- We recalculate automatically if your parameter cost changes.<br>- (After saving) Press F5 and check here again to see changes.</small>
+        </span>
+      </div>
+    </header>
+
+    <form id="settings-form" class="modal-body" novalidate>
+      <label for="preset-select"><strong>Context length presets</strong></label>
+      <select id="preset-select" name="preset" aria-describedby="preset-desc">
+        <option value="custom" selected>Custom</option>
+        <option value="1">8k - 16gb VRAM - Full</option>
+        <option value="2">7k - High</option>
+        <option value="3">6k - 12gb VRAM -  Mid</option>
+        <option value="4">5k - Low</option>
+        <option value="5">4k - Try with 8gb VRAM - Lower</option>
+      </select>
+      <div id="preset-desc" class="hint">Choose a preset, edit as needed.</div>
+
+      <div class="fields">
+        <label for="field-a"><strong>Total token budget (N_CTX)</strong></label>
+        <input id="field-a" name="a" type="number" inputmode="numeric" step="1" />
+
+        <label for="field-b"><strong>"Raw" story window</strong></label>
+        <input id="field-b" name="b" type="number" inputmode="numeric" step="1" />
+
+        <label for="field-c"><strong>Mid-term memories</strong></label>
+        <input id="field-c" name="c" type="number" inputmode="numeric" step="1" />
+
+        <label for="field-d"><strong>Long-term memories</strong></label>
+        <input id="field-d" name="d" type="number" inputmode="numeric" step="1" />
+      </div>
+
+      <div class="remaining-row" aria-live="polite" id="remaining-desc">
+        <span id="remaining-value">0</span><strong> Remaining<br>(estimation without parameters entered)</strong>
+        <small class="small-muted">Parameters = Writing Style, World Setting, Rules, Player, Characters</small>
+      </div>
+
+      <div class="modal-actions">
+        <div id="settings-error" role="alert" aria-live="assertive" style="color:crimson;display:none"></div>
+        <button id="settings-save" type="button" class="rpgui-button golden">Save</button>
+        <button id="settings-cancel" type="button" class="rpgui-button">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<style>
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes h2 left, icon right */
+}
+
+.info-icon-settings {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.info-icon-settings:hover {
+  transform: translateY(-1px);
+  color: var(--accent);
+}
+.info-icon-settings:hover .tooltip-settings,
+.info-icon-settings:focus .tooltip-settings {
+  opacity: 1;
+}
+
+.tooltip-settings {
+  position: absolute;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(51, 51, 51, 0.9); /* Slight transparency for depth */
+  color: #fff;
+  padding: 8px 12px; /* Increased padding */
+  border-radius: 6px; /* Slightly larger border radius */
+  font-size: 0.9rem; /* Slightly larger font size */
+  white-space: normal;
+  min-width: 300px;
+  max-width: 512px;
+  line-height: 1.5; /* Increased line height for readability */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+  border: 1px solid #777; /* Subtle border for definition */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out; /* Smooth transition */
+  z-index: 10;
+}
+
+.modal[hidden] { display: none; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); }
+.settings-modal-panel {
+  position: fixed;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, -35%);
+  background: var(--bg-color, #0b0b0b);
+  color: var(--fg-color, #f7f7f7);
+  padding: 1rem;
+  border-radius: 8px;
+  width: min(360px, 92%);
+  z-index: 1001;
+}
+.modal-body { display: grid; gap: 0.5rem; }
+.fields { display: grid; gap: 0.4rem; margin-top: 0.25rem; }
+label { font-size: 0.95rem; }
+input[type="number"], select { width: 100%; padding: 0.45rem; border-radius: 4px; border: 1px solid #333; background: #111; color: #fff; }
+.modal-actions { display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.75rem; }
+
+
+#settings-modal strong {
+  font-size: 1.0rem;
+  font-weight: 600;
+  color: #ffd96b;
+  padding-top: 12px;
+  padding-bottom: 0.5rem;
+}
+
+/* Hide native number input spinner buttons (WebKit) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide native number input spinner buttons (Firefox) */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Keep visual styling consistent */
+input[type="number"] {
+  padding-right: 0.45rem; /* adjust if needed */
+}
+
+
+/* Styles for settings button (for index.html) */
+#open-settings.settings-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 0.25rem;
+  background: transparent;
+  border: none;
+  color: #2b6cb0;               /* calm blue to distinguish from delete/help */
+  cursor: pointer;
+  border-radius: 0;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+  width: 38px;
+  height: 38px;
+}
+
+/* Hover — slight lift */
+#open-settings.settings-icon:hover {
+  transform: translateY(-1px);
+}
+
+/* Active / pressed state */
+#open-settings.settings-icon:active {
+  transform: translateY(0);
+}
+</style>

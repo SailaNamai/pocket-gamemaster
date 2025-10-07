@@ -1,0 +1,24 @@
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+
+# Local binaries / compiled libs
+llama.cpp/
+
+# Backup and log folders
+BKP/
+logs/
+
+# Model weights and large files
+*.gguf
+
+# Local databases
+*.db
+
+# OS cruft
+.DS_Store
+Thumbs.db

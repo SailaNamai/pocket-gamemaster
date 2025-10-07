@@ -1,0 +1,99 @@
+# Story preset
+# Keep the tags intact
+
+<param-style>
+- Noir
+- Psychological Thriller
+</param-style>
+
+<param-world>
+- Set in Vampire The Masquerade/World of Darkness .
+- Modern day Barcelona, Spain.
+
+- Vampiric Society:
+Most vampires live in cities, which are run feudally by the Princes; life in a city is one of constant political manipulation and paranoia, as the Cainites vie for food, territory, and power. But while they must dwell in close contact with their source of sustenance, vampires largely fear the exposure to the mortal world, and since the Inquisition the majority of these creatures have lived under the Masquerade – an enforced campaign to hide their supernatural existences from humanity. 
+
+- The Masquerade:
+An organized disinformation campaign heavily enforced by Kindred society (mainly the Camarilla), meant to convince humans that vampires and various other supernatural creatures do not exist. The Masquerade is the cornerstone survival strategy for Cainites; without it, the kine undoubtedly would rise up and exterminate all the undead. Generally, a breach consists of any evidence of vampiric powers: feeding on blood, obvious use of Disciplines, regeneration in plain sight and the like.
+
+- The Camarilla:
+A secretive organization that upholds traditions and masquerades to maintain control over vampire society. They prioritize stability, often imposing strict rules to prevent exposure to humans, thereby maintaining the Masquerade. Their members tend to be from privileged backgrounds, focusing on politics, influence, and the protection of their own power.
+
+- The Sabbat:
+Embraces chaos and rejects the Camarilla's authority. They see themselves as warriors against the oppressive structure of the Camarilla, valuing freedom and primal instincts over order and tradition. The Sabbat engages in more brutal and open practices, often considering humanity a weakness to be transcended rather than protected.
+
+- The Clans:
+- Brujah: Rebels and thinkers, known for their passion and fervor,
+- Gangrel: Wild and primal, they have a connection to the beast within,
+- Nosferatu: Hideous and stealthy, they excel in espionage and information gathering,
+- Toreador: Artists and hedonists, obsessed with beauty and pleasure,
+- Ventrue: Leaders and nobles, they seek power and control over others,
+- Malkavian: Insightful yet mad, they possess unique perspectives and wisdom,
+- Tremere: Sorcerers who practice blood magic, known for their secretive nature,
+- Lasombra: Masters of shadows, they wield influence and power with darkness,
+- Giovanni: Wealthy necromancers who blend commerce with death.
+</param-world>
+
+<param-rules>
+- All characters, that are not Clan Malkavian, speak in clear and modern English. 
+
+Understanding Generations:
+- 7th Generation: Often seen as relatively young and may not have significant power or status.
+- 6th Generation: These vampires possess greater abilities and possibly higher status within vampire society.
+- 5th Generation: Considered powerful and influential, with significant respect among their peers.
+- 4th Generation: Known for their might and leadership roles in the vampire community.
+- 3rd Generation: Respected figures often considered to be among the oldest and most powerful.
+- 2nd Generation: Direct descendants of the original bloodline and have immense power.
+- 1st Generation: The original vampires, also known as the Antediluvians, who are legendary and often shrouded in mystery, serving as the progenitors of all clans.
+
+The Disciplines:
+- Auspex: Heightened senses and perception.
+Preferred by: Tremere, Malkavian, Toreador
+- Celerity: Supernatural speed and agility.
+Preferred by: Brujah, Gangrel, Toreador
+- Dementation: Manipulation of sanity and emotions.
+Preferred by: Malkavian
+- Dominate: Control others' thoughts and actions.
+Preferred by: Ventrue, Toreador
+- Obfuscate: Veiling presence from detection.
+Preferred by: Gangrel, Nosferatu
+- Potence: Superhuman strength and power.
+Preferred by: Brujah, Gangrel, Nosferatu
+- Presence: Charismatic influence over others.
+Preferred by: Toreador, Ventrue
+- Fortitude: Enhanced resilience and endurance.
+Preferred by: Gangrel, Brujah, Ventrue
+- Thaumaturgy: Blood magic and supernatural rituals.
+Preferred by: Tremere
+</param-rules>
+
+<param-player>
+- Name: Selene 'The Moonbeam' of Aquitaine 
+- 3rd generation
+- Clan Malkavian
+- Curse of Malkav: 
+Can only speak in metaphors (prefer animals, music, moonlight, pleasure to kill); 
+happily chats with the voices in her head; 
+sees wonders in mundane things
+- An ephemeral beauty with long blonde hair
+- Often perplexes in conversations
+- A firm believer in the Masquerade and, if in the mood, will hunt down those that threaten it
+- Assigns an animal persona to every person she meets and refers to them as such
+</param-player>
+
+<param-characters>
+Prince Victor, aka the Lion: 
+- 3rd generation
+- Clan Ventrue
+- Prince of Barcelona
+- Sees Selene as something between a weapon he can manipulate and an equal 
+- Knows that to focus Selene's madness he needs to entertain her
+- Commands the Lieutenants
+
+Lieutenants (personalities=assigned animal):
+The Wolf (5th generation, Clan Brujah, male),
+The Bear (6th generation, Clan Toreador, male),
+The Fox (6th generation, Clan Lasombra, female),
+The Panther (5th generation, Clan Gangrel, female).
+</param-characters>
+

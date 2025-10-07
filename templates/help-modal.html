@@ -1,0 +1,140 @@
+<!-- help-modal.html -->
+<div id="help-modal" class="help-overlay" aria-hidden="true">
+  <div class="help-box" role="document">
+    <button class="help-close" aria-label="Close help">&times;</button>
+    <div class="help-content">
+        <h1 align="center">Help, clarifications and best practice</h1><p>
+        <h4>Buttons & getting started:</h4>
+        <small class="muted-small">More comprehensive Documentation at .../pgm/documentation</small>
+        <ul>
+            <li>
+                <strong>Continue</strong>:<br>
+                <em>Without story</em> present it will start a new one.<br>
+                <em>Without an action</em> entered it will continue from the last paragraph.<br>
+                <em>With an action</em> entered it will resolve that action.<p>
+            </li>
+            <li>
+                <strong>Re-Do</strong>:<br>
+                Remove and re-do the last paragraph.<br>
+                Note that player action (remains) + generation are two paragraphs.<p>
+            </li>
+        </ul>
+
+        <h4>Parameter tabs</h4>
+        <ul>
+            <li>
+                <strong>Writing Style</strong>:<br>
+                Be precise (but don't be afraid to experiment). Your input will be added as part of the system prompt.<br>
+                Example: "Tone: tense and cinematic. Language: plain modern English."<p>
+            </li>
+            <li>
+                <strong>World Setting</strong>:<br>
+                Describe the world, reference the universe you want to play in...<br>
+                Example: "Late medieval coastal city with piracy, crude gunpowder, and rigid guilds."<br>
+                Example: "Robert Jordan's the Wheel of Time fantasy series during the birth of the Dragon Reborn."<p>
+            </li>
+            <li>
+                <strong>Rules</strong>:<br>
+                Provide high-level guidance about mechanics and limits rather than dice math.<br>
+                Good Example: "Saidin is the male half of the One Power. It is described as a raging torrent of the Power which must be subdued and dominated by a strong-willed channeler in order to be controlled."<br>
+                Bad Example:&nbsp;&nbsp;&nbsp;&nbsp;"Use 1d6 + current skill to determine the outcome of a persuasion attempt."<p>
+            </li>
+            <li>
+                <strong>Player</strong>:<br>
+                Describe your player character: Name, history, personality, traits, skills, whatever...<br>
+                The LLM is instructed not to invent gear and expects you to define it.<br>
+                Example: "I use sword and shield. My sword, Anduril, never dulls. I wear dark leather armor and a red cloak, both adorned with the emblems of Gondor."<br>
+                Hint/Warning: If you feed the LLM stuff from Lord of the Rings (like Anduril) it is likely to add/include other elements from the universe.<p>
+            </li>
+            <li>
+                <strong>Characters</strong>:<br>
+                List a few important NPCs and notes on their personality, motive, [...] , or relationship to the PC.<br>
+                Example: "Professor Farnsworth: A genius mad scientist, who breeds atomic super mutants for fun. Very old and frail. Bald with hunched posture. Is my uncle, who doesn't like me."<p>
+            </li>
+        </ul>
+
+        <h4>Editable "memory" fields: Story History + Mid-Term + Long-Term</h4>
+        <ul>
+            <li>
+                Edit/Add to correct tone, fix details, or remove unwanted events. Edits are passed to the DB on button click and respected in generations.<p>
+            </li>
+            <li>
+                <strong>Story History</strong>:<br>
+                "Short-term" memory: Changing text outside the budget will be passed to DB but not be respected in prompts - unless the memory pipeline includes it in its summary, but it's not guaranteed."
+                (I'd say with a budget of 2000: Don't edit outside the last 8 paragraphs.)<p>
+            </li>
+            <li>
+                <strong>Mid-Term</strong>:<br>
+                Rolling window/conveyor belt: Edit as needed.<p>
+            </li>
+            <li>
+                <strong>Long-Term</strong>:<br>
+                Shows all long-term memories: Edit as needed.<br>
+                Some of these (until we hit budget) are chosen for the LLM prompt based on tag weighted relevance scoring. Removing some bullet points might therefore create a tag mismatch (not that dramatic in the end) but you might consider removing a full "set" of bullet points instead.<br>
+            </li>
+        </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+#help-modal li { color: #f6f3ec; font-size: 1rem; line-height: 1.6; }
+
+#help-modal h1, h2, h3, h4, h5, h6 {
+  font-size: 1.1rem;
+  color: #ffd96b;
+  font-weight: 1000;
+  line-height: 1.2;
+  margin: 0 0 0.5rem 0;
+}
+
+#help-modal strong {
+  font-size: 1.1rem;
+  font-weight: 1000;
+  color: #ffd96b;
+  padding-top: 12px;
+  padding-bottom: 0.5rem;
+}
+
+.code-indent { font-size: 0.9rem; padding-left: 1.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.code-indent code { display: inline-block; }
+.code-indent2 { font-size: 0.9rem; padding-left: 1.5rem; padding-bottom: 0.5rem; }
+.code-indent2 code { display: inline-block; }
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.help-overlay.open {
+  display: flex;
+}
+
+.help-box {
+  background: #0f1724;
+  color: #fff;
+  border-radius: 8px;
+  width: min(800px, 92%);
+  max-height: 86vh;
+  overflow: auto;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.help-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+</style>

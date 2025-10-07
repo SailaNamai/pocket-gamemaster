@@ -1,0 +1,94 @@
+# services.summarize_tag_recent.py
+
+import subprocess
+import sys
+import sqlite3
+
+from services.llm_config import Config, GlobalVars
+from services.DB_access_pipeline import write_connection
+from services.prompt_builder_tag_recent import get_prompts_tag_recent
+from services.summarize_tag_clean_json import clean_llm_json
+
+LLAMA_CLI_PATH = Config.LLAMA_CLI
+LOG_DIR  = GlobalVars.log_folder
+LOG_FILE = 'tag_recent.log'
+
+def summarize_tag_recent():
+    log_path = LOG_DIR / LOG_FILE
+    # build prompts
+    system_prompt, user_prompt = get_prompts_tag_recent()
+
+    # invoke llama-cli
+    cmd = [
+        LLAMA_CLI_PATH,
+        "-m", str(Config.MODEL_PATH),
+        "--ctx-size", str(Config.N_CTX),
+        "--threads", str(Config.N_THREADS),
+        "--gpu-layers", str(Config.N_GPU_LAYERS),
+        "--temp", str(Config.TEMPERATURE_TAGS),
+        "--top-p", str(Config.TOP_P),
+        "--repeat-penalty", str(Config.REPEAT_PENALTY),
+        "--frequency-penalty", str(Config.FREQUENCY_PENALTY),
+        "--presence-penalty", str(Config.PRESENCE_PENALTY),
+        "--chat-template-file", str(Config.TEMPLATE_PATH),
+        "--system-prompt", system_prompt,
+        "--prompt", user_prompt,
+    ]
+    try:
+        result = subprocess.run(
+            cmd,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] llama-cli exited with {e.returncode}", file=sys.stderr)
+        print(e.stderr, file=sys.stderr)
+        sys.exit(e.returncode)
+
+    full_out = result.stdout or ""
+    print("=== raw stdout ===\n", full_out)
+
+    # isolate assistant response
+    marker = f"{user_prompt}assistant"
+    assistant_out = full_out.split(marker, 1)[1] if marker in full_out else full_out
+    body = assistant_out.split("> EOF by user", 1)[0].strip()
+    tags = body.strip()
+    # attempt json repair
+    tags_repaired = clean_llm_json(tags)
+
+    # Log both
+    with open(log_path, 'w', encoding='utf-8') as log_f:
+        log_f.write("=== LLM json ===\n")
+        log_f.write(tags + "\n\n")
+        log_f.write("=== repaired json ===\n")
+        log_f.write(tags_repaired + "\n")
+
+    # persist: update story_paragraphs.tags_recent
+    with write_connection() as conn:
+        conn.row_factory = sqlite3.Row
+        # find newest (highest id) paragraph and write tags_recent
+        row = conn.execute("""
+            SELECT id
+              FROM story_paragraphs
+             WHERE (tags_recent IS NULL OR tags_recent = '')
+             ORDER BY id DESC
+             LIMIT 1
+        """).fetchone()
+        if not row:
+            return
+
+        paragraph_id = row["id"]
+
+        # single UPDATE
+        conn.execute("""
+            UPDATE story_paragraphs
+               SET tags_recent = ?
+             WHERE id = ?
+        """, (
+            tags_repaired,
+            paragraph_id,
+        ))
+    return
