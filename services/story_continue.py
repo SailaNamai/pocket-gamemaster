@@ -51,11 +51,14 @@ def generate_story_continue():
         # Remove everything after the EOF sentinel
         text = full_text.split("> EOF by user", 1)[0].strip()
         # Split into paragraphs on blank lines
-        paras = re.split(r'\n\s*\n', text)
-        # Keep only the first two non-empty paragraphs
-        first_two = [p.strip() for p in paras if p.strip()][:2]
+        paras = [p.strip() for p in re.split(r'\n\s*\n', text) if p.strip()]
+        # Always take the first two paragraphs
+        selected = paras[:2]
+        # If a third paragraph exists and is exactly the GAME OVER marker, include it
+        if len(paras) > 2 and paras[2].strip() == "GAME OVER - Try again? :)":
+            selected.append(paras[2].strip())
         # Collapse all line breaks into single spaces
-        generated = ' '.join(first_two)
+        generated = ' '.join(selected)
 
         # Count tokens for this new paragraph
         token_cost = count_tokens(generated)

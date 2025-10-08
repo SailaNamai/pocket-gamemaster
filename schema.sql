@@ -38,6 +38,17 @@ CREATE TABLE IF NOT EXISTS token_budget (
   long_budget               INTEGER                                -- tc_budget_long_memories
 );
 
+-- Action evaluation bucket (singleton)
+CREATE TABLE IF NOT EXISTS action_eval_bucket (
+  id                              INTEGER PRIMARY KEY CHECK(id = 1), -- always 1, singleton row
+  eval_sheet                      TEXT,      -- eval sheet (stats, skill, etc)
+  easy                            TEXT,      -- ruleset: easy
+  medium                          TEXT,      -- ruleset: medium
+  hard                            TEXT,      -- ruleset: hard
+  difficulty                      TEXT,      -- settings: front end
+  token_cost                      TEXT       -- cost for all
+);
+
 -- Summarize_parameters (singleton)
 CREATE TABLE IF NOT EXISTS mid_memory_bucket (
   id                              INTEGER PRIMARY KEY CHECK(id = 1), -- always 1, singleton row
@@ -63,7 +74,9 @@ CREATE TABLE IF NOT EXISTS system_prompts (
   mid_memory_summarize TEXT,                               -- system prompt for summarization of a mid-term memory
   mm_token_cost        TEXT,                               -- token cost for mid_memory_summarize
   tag_generator        TEXT,                               -- system prompt for tagging system
-  tg_token_cost        TEXT                                -- token cost for tag_generator
+  tg_token_cost        TEXT,                               -- token cost for tag_generator
+  eval_system          TEXT,                               -- system prompt for user action evaluation system
+  es_token_cost        TEXT                                -- token cost for eval_system
 );
 
 -- Sequence of paragraphs for any story phase (intro, continuation, etc.)
@@ -78,5 +91,7 @@ CREATE TABLE IF NOT EXISTS story_paragraphs (
   summary_token_cost  TEXT,                                -- summary token cost for either summary_from_action or summary
   tags                TEXT,                                -- json
   tags_recent         TEXT,                                -- json - tags from last n paragraphs for tag comparison
+  outcome             TEXT,                                -- Outcome of a player action
+  outcome_token_cost  TEXT,                                -- Outcome token cost
   created_at          TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%f','now','localtime')) -- timestamp of insertion
 );

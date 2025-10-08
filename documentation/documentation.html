@@ -92,7 +92,7 @@
     <div id="content-repo" style="display:none">
       <!-- Installation cards -->
       <div id="install-step1-card" class="repo-card" data-tab="install">
-PGM is a free, open source, locally run, text based, multi-personality LLM powered RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
+PGM is a free, open source, locally run, text based, multi-personality LLM powered, curated RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
 
 It is designed to extend context length as far as I can push it (its beta and there is still some potential left). It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
 
@@ -105,6 +105,10 @@ Text based, LLM powered:
 Pretty self-explanatory. The LLM is "abliterated" - meaning you should never see:
 "As an LLM I'm not able to continue this conversation."
 
+Curated:
+Every action is evaluated by a proper GameMaster - think of it like a deep think function.
+It is then given to the "writer"-persona to continue the story.
+
 Human-like memory:
 When we continue the story we feed the LLM as much context as possible:
 First the detailed, "raw" story (what you read). After a while the raw story is summarized from player action to (but not including) the next player action. These mid-term memories mean we remember what's important: What you did and what happened because of it. Mid-term memories are eventually condensed further into long-term memories. Long term memories are selectively chosen by relevance and weighed, assembled into chronological order and given to the LLM.
@@ -113,8 +117,9 @@ The "memory" part of the prompt looks like:
 These are the mid-story events:
 This is what happened recently:</code></div>
 "Multiple personalities":
-The LLM is (possibly) prompted a total of five times per "generation" for
+The LLM is (possibly) prompted a total of six times per "generation" for
 <div class="code-indent"><code>generate (new, with and without player action),
+evaluate a player action for success/failure and outcome,
 summarize from player action,
 create tags for that player action,
 summarize mid-term memories,

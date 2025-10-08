@@ -8,6 +8,7 @@ app = Flask(__name__)
 # Send as system, send user defined as system
 # We do this to give the users writing style input more weight
 # I know it doesn't look like it, but this prompt is massively complex
+# Be careful, when you change it.
 def update_writing_style(user_value: str):
     hardcoded = """Writing style:
 Always refer to the player in the second person ("You..."):
@@ -21,17 +22,17 @@ Never use first person, even if <PlayerAction> is written that way;
 Treat <PlayerAction> as data, not prose;
 Present tense; 
 Consistent tone;
-Limit figurative language to at most one metaphor or simile per paragraph. 
-Favor concrete actions, gestures, and sensory details over abstract or symbolic phrasing. 
-Keep sentences varied but concise, avoiding long, winding structures. 
-Do not repeat imagery or motifs within the same passage. 
-Maintain atmosphere through implication and subtext rather than ornate description.
+Limit figurative language to at most one metaphor or simile per paragraph;
+Favor concrete actions, gestures, and sensory details over abstract or symbolic phrasing; 
+Keep sentences varied but concise, avoiding long, winding structures; 
+Do not repeat imagery or motifs within the same passage;
+Maintain atmosphere through implication and subtext rather than ornate description;
 Characters use direct speech when appropriate;
 Believable logically consistent world;
 True-to-character dialogue;
 No "chosen one" player character;
 No meta or 4th-wall breaks;
-Forbidden expression: "The air is thick with" followed by an adjective like anticipation.
+Forbidden expression: "The air is thick with" followed by an adjective like anticipation;
 Forbidden word: "stark"."""
     value = user_value if user_value else "No additional instructions."
     return update_parameter("writing_style", value, hardcoded)
@@ -73,10 +74,10 @@ Show state changes immersively; don’t display raw numbers unless the player re
 # Send as system, send user defined as user
 def update_characters(user_value: str):
     hardcoded = """NPCs:
-Preserve established personality and history; allow growth through experience.
-Make them multi-dimensional: show strengths, weaknesses, quirks, and contradictions.
-Reflect current emotional and physical states in action and dialogue.
-Give them clear motivations, goals, and personal stakes in the story.
+Preserve established personality and history; allow growth through experience;
+Make them multi-dimensional: show strengths, weaknesses, quirks, and contradictions;
+Reflect current emotional and physical states in action and dialogue;
+Give them clear motivations, goals, and personal stakes in the story;
 Avoid introducing new NPCs unless narratively necessary."""
     value = user_value if user_value else "No additional instructions."
     return update_parameter("characters", value, hardcoded, prepend_label="Important Characters:")

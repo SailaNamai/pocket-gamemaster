@@ -2,6 +2,7 @@
 
 import sqlite3
 import json
+import re
 from typing import Dict, Any, Optional, Iterable
 
 from services.DB_access_pipeline import connect
@@ -57,14 +58,19 @@ def _prune(tag_cloud_weighed):
 
 def _scrub_character_tag(tag_cloud: Dict[int, Dict[str, Any]]) -> Dict[int, Dict[str, Any]]:
     """
-    We need to clean the character tag:
-    - remove instances of 'I', 'You', 'narrator'
+    Clean the character tag:
+    - remove banned entries (case-insensitive)
+    - strip any trailing parenthetical qualifiers, e.g. "Marlin (met at store)" -> "Marlin"
     """
+
     banned = {
         "i", "you",
-        "narrator", "narrator (implied)", "narrator (no name given)", "narrator (unnamed)", "narrator (protagonist)", "narrator (player)",
-        "player", "<PlayerAction>", "player character", "player character (unnamed)", "player character (no name given)", "player (narrator)"
+        "narrator", "narrator", "narrator", "narrator",
+        "narrator", "narrator",
+        "player", "<PlayerAction>", "player character", "player character",
+        "player character", "player"
     }
+
     cleaned_cloud: Dict[int, Dict[str, Any]] = {}
 
     def _iter_items(value: Any) -> Iterable[str]:
@@ -72,8 +78,7 @@ def _scrub_character_tag(tag_cloud: Dict[int, Dict[str, Any]]) -> Dict[int, Dict
             return []
         if isinstance(value, str):
             # allow comma separated names as fallback
-            parts = [p.strip() for p in value.split(",") if p.strip()]
-            return parts
+            return [p.strip() for p in value.split(",") if p.strip()]
         if isinstance(value, (list, tuple, set)):
             return [str(p).strip() for p in value if p is not None and str(p).strip()]
         return [str(value).strip()]
@@ -87,26 +92,40 @@ def _scrub_character_tag(tag_cloud: Dict[int, Dict[str, Any]]) -> Dict[int, Dict
                 out.append(s)
         return out
 
+    def _strip_parenthetical(name: str) -> str:
+        # Remove all "(...)" groups anywhere in the string
+        return re.sub(r"\s*\([^)]*\)", "", name).strip()
+
     for pid, tags in tag_cloud.items():
         if not isinstance(tags, dict):
             cleaned_cloud[pid] = tags
             continue
+
         tags_copy = dict(tags)  # shallow copy to avoid mutating input
         if "character" in tags_copy:
             raw = tags_copy.get("character")
             items = list(_iter_items(raw))
+
+            # normalize by stripping parentheticals
+            normalized = [_strip_parenthetical(itm) for itm in items]
+
             # filter banned entries case-insensitively
-            filtered = [itm for itm in items if itm.lower() not in banned]
+            filtered = [itm for itm in normalized if itm.lower() not in banned]
+
+            # dedupe while preserving order
             filtered = _unique_preserve_order(filtered)
+
             if not filtered:
                 tags_copy["character"] = None
             elif len(filtered) == 1:
                 tags_copy["character"] = filtered[0]
             else:
                 tags_copy["character"] = filtered
+
         cleaned_cloud[pid] = tags_copy
 
     return cleaned_cloud
+
 
 def _get_tag_recent() -> Dict[int, Dict[str, Any]]:
     """

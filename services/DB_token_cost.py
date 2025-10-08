@@ -167,7 +167,8 @@ def update_system_prompt_costs():
                    story_player_action,
                    story_summarize,
                    mid_memory_summarize,
-                   tag_generator
+                   tag_generator,
+                   eval_system
               FROM system_prompts
              WHERE id = 1
         """).fetchone()
@@ -185,7 +186,8 @@ def update_system_prompt_costs():
                    sp_token_cost = ?,
                    ss_token_cost = ?,
                    mm_token_cost = ?,
-                   tg_token_cost = ?
+                   tg_token_cost = ?,
+                   es_token_cost = ?
              WHERE id = 1
         """, costs)
     return

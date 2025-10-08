@@ -22,6 +22,7 @@ from services.prompts_story_parameters import write_story_prompts
 from services.prompts_memory_prefix import write_memory_prefix
 from services.prompts_tag import write_tagging_prompts
 from services.DB_token_budget import write_initial_budget, update_budget
+from services.prompts_eval_action import write_action_eval_bucket
 """
 Buttons (Continue = continue_story & player_action, ...)
 """
@@ -30,6 +31,7 @@ from services.story_new import generate_story_new
 from services.story_continue import generate_story_continue
 from services.DB_player_action_to_paragraph import player_action_to_paragraph
 from services.story_player_action import generate_player_action
+from services.story_player_action_eval import evaluate_player_action
 #from services.story_force import handle_forced_prompted_action
 """
 Memories&Summaries
@@ -182,10 +184,9 @@ def api_player_action():
     update_db = data.get('candidate')
     if update_db: persist_user_edit(update_db)
     player_action = data.get('action', '')
-    # ← Save the returned player_action do DB {id, content, story_id}
-    action_row = player_action_to_paragraph(player_action)
-    # ← handle_player_action() must also return a dict {id, content, story_id}
-    llm_row = generate_player_action()
+    action_row = player_action_to_paragraph(player_action) # Save the returned player_action to DB {id, content, story_id}
+    evaluate_player_action() # evaluation/outcome of that action, writes directly into db
+    llm_row = generate_player_action() # handle_player_action() must also return a dict {id, content, story_id}
     mid_html = publish_mid_memory()
     long_html = publish_long_memory()
     # return both rows as an array
@@ -227,7 +228,7 @@ def api_update_budget():
     write_budget(int(n_ctx), int(recent), int(mid), int(long_))
     return jsonify(message='update_successful'), 200
 
-
+# This stuff here runs once everytime you do python app.py
 if __name__ == '__main__':
     init_db()
     # Fill DB with hard coded stuff and placeholders
@@ -237,12 +238,14 @@ if __name__ == '__main__':
     write_tagging_prompts()
     write_mid_memory_prompts()
     write_initial_budget()
-    app.run(debug=True, port=5000, threaded=True)
-    # You can remove debug=True or set it to False. True will restart the app when the code changes.
+    write_action_eval_bucket()
+    # You can remove debug=True or set it to False. True will restart the app when the code changes (but not write to DB).
     # app.run(debug=True, port=5000, host='0.0.0.0', threaded=True) makes the app accessible from the local network: remove to limit to local machine only.
     # app.run(debug=True, port=5000, threaded=True) removes local network access.
     # Change port if you need to.
     # Don't think we actually need threaded=True
+    app.run(debug=True, port=5000, threaded=True)
+
 
 
 """

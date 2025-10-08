@@ -1,6 +1,7 @@
 
 ##### Important
-## 1: (improved - observing) 2nd person pov breaking
+## 1: (improved - observing) narrative drift/degradation
+## 1: 2nd person pov breaking
 ## 1: Response length inflation - when the story grows?
 It begins reasonable but paragraphs on occassion begin to bust the 350 limit.
 Possible causes:
@@ -23,15 +24,15 @@ Possible solution:
 # Note: When the json was broken it was easy to filter out player from character... 
 # Note: now that it gets it right i need to think about determining who the player is... that skews the rating - always present.
 - location: disallow partial scoring for unknown, abandoned? - that kind of fluff
-- filter any "(text)" from character tags
+- filter any "(text)" from character tags (solved)
 - tag recent has no player tag wrap (solved)
 
 ## 3: (do) Think about a reddit post
-- readme.md requires install instruction (git)
+- readme.md requires install instruction
 - I don't have a git account
-- I do now - upload succesful
+- I do now - upload successful
 
-## 4: (do) Github always builds at git name
+## 4: (solved) Github always builds at git name
 - which is unlike my documentation pgm vs pocket-gamemaster
 - which sucks
 - maybe github allows clone bla as ble

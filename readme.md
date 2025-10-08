@@ -1,6 +1,6 @@
 # Pocket GameMaster
 
-**PGM** is a free, open source, locally run, text based, multi-personality LLM powered RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
+**PGM** is a free, open source, locally run, text based, multi-personality LLM powered, curated RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
 
 It is designed to extend context length as far as I can push it. It is beta and there is still some potential left but currently PGM achieves (~6-10):1 compression ratios and then selects salient memories.
 It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
@@ -22,6 +22,10 @@ It doesn't need an internet connection. It doesn't communicate with anything and
 - **Text based, LLM powered:**
 Pretty self-explanatory. The LLM is "abliterated" - meaning you should never see:
 "As an LLM I'm not able to continue this conversation."
+
+- **Curated:**
+We have a GameMaster analyze attempted player actions for its outcome (success/failure, effect...)
+That result is then passed to the "writer" persona to generate new text.
 
 - **Human-like memory:**
 When we continue the story we feed the LLM as much context as possible:

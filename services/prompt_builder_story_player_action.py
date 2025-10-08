@@ -24,9 +24,10 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
       user_prompt:   string combining:
                      prepend + dynamic characters, player, rules,
                      world setting, and writing style if needed
-                     + relevant tagged parapgraphs # tagging not yet implemented
-                     + story so far # last n paragraphs
+                     + relevant tagged paragraphs (recent block)
+                     + story so far (last n paragraphs within budget)
                      + User attempted action with tag wrap
+                     + Outcome (already tag wrapped, appended at end)
     """
     log_path = LOG_DIR / LOG_FILE
 
@@ -88,9 +89,6 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
         """)
         mid_memory_hc, long_memory_hc = cur.fetchone()
 
-        # Load tagged paragraphs
-        # tagging not yet implemented
-
     finally:
         conn.close()
 
@@ -106,7 +104,7 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
         rules_hc.strip(),
         world_hc.strip(),
         style_hc.strip(),
-        # user writing as style as system
+        # user writing style as system
         style.strip(),
         # memories
         long_memory_hc.strip(),
@@ -116,21 +114,13 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
     ]
     system_prompt = "\n\n".join(filter(None, system_segments))
 
-    """
-    Assemble user_segments including:
-      - all custom inputs (player, rules, world, etc.)
-      - a “recent_block” that fills up to GlobalVars.tc_budget_recent_paragraphs
-    """
-    # 1. Recompute all tc_max_* ceilings
-    #update_allowed_ceilings()
-
-    # 2. Load all story_paragraphs, ordered by paragraph_index
+    # Load all story_paragraphs, ordered by id
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         cur.execute("""
-                    SELECT id, story_id, content, token_cost
+                    SELECT id, story_id, content, token_cost, outcome, outcome_token_cost
                       FROM story_paragraphs
                      ORDER BY id
                 """)
@@ -138,12 +128,23 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
     finally:
         conn.close()
 
-    # 3. Pick as many of the newest paragraphs as will fit under the ceiling
+    # Prepare recent block with budget
     max_recent = GlobalVars.tc_budget_recent_paragraphs
     selected = []
     acc = 0
 
-    # iterate from newest to oldest
+    # Deduct outcome cost first (if present on the latest row)
+    latest_outcome = None
+    if rows:
+        last_row = rows[-1]
+        if last_row["outcome"]:
+            latest_outcome = last_row["outcome"].strip()
+            outcome_cost = int(last_row["outcome_token_cost"] or 0)
+            max_recent -= outcome_cost
+            if max_recent < 0:
+                max_recent = 0
+
+    # iterate from newest to oldest for story paragraphs
     for row in reversed(rows):
         cost = int(row["token_cost"])
         if acc + cost > max_recent:
@@ -154,7 +155,7 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
     # restore original chronological order
     selected.reverse()
 
-    # 4. Build the “recent_block” with UserAction wrapping
+    # Build the “recent_block” with UserAction wrapping
     wrapped_texts = []
     for r in selected:
         text = r["content"].strip()
@@ -163,13 +164,22 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
         wrapped_texts.append(text)
 
     recent_block = (
-            "Here is what happened in the last paragraphs:\n\n"
-            + "\n\n".join(wrapped_texts)
+        "Here is what happened in the last paragraphs:\n\n"
+        + "\n\n".join(wrapped_texts)
     )
-    # 5. Collect all user-defined segments
-    user_segments = [prepend_chars.strip(), chars.strip(), prepend_player.strip(), player.strip(),
-                     prepend_rules.strip(), rules.strip(), prepend_world_setting.strip(), world.strip(), recent_block]
 
+    # Append outcome if available
+    if latest_outcome:
+        recent_block += "\n\n" + latest_outcome
+
+    # Collect all user-defined segments
+    user_segments = [
+        prepend_chars.strip(), chars.strip(),
+        prepend_player.strip(), player.strip(),
+        prepend_rules.strip(), rules.strip(),
+        prepend_world_setting.strip(), world.strip(),
+        recent_block
+    ]
 
     user_prompt = "\n\n".join(filter(None, user_segments))
 

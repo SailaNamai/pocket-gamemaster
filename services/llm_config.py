@@ -7,6 +7,7 @@ BASE = Path(__file__).resolve().parent.parent
 
 """
 LLM config
+https://github.com/ggml-org/llama.cpp/discussions/15709
 """
 class Config:
     # Sampling temperature: controls how “risky” the model is when choosing each next word.
@@ -21,6 +22,7 @@ class Config:
     TEMPERATURE_SUM_MID: float = 0.7 # used in summarizing the raw story to mid-term memory
     TEMPERATURE_SUM_LONG: float = 0.5 # used in condensing mid-term memories into long-term memory
     TEMPERATURE_TAGS: float = 0.3 # used in creating tags (keep low or the json will be faulty/fail).
+    TEMPERATURE_EVAL: float = 0.2  # used in evaluation of player action outcome
 
     # Nucleus sampling cutoff (top_p): trims the “candidate list” to only the most probable words.
     #   • Imagine the model ranks all possible next words by likelihood. top_p defines how much of
@@ -31,6 +33,7 @@ class Config:
     #   • A lower top_p (e.g., 0.5) makes the model extremely conservative (only the very top words),
     #     while a top_p near 1.0 opens it up to almost every possibility.
     TOP_P: float = 0.8
+    TOP_P_slave: float = 0.5 # for tag and eval
 
     # Frequency penalty: discourages the model from repeating the same words over and over.
     #   • Scale runs from –2.0 to +2.0.
@@ -39,6 +42,7 @@ class Config:
     #   • Values < 0.0 actually encourage repetition, which can be useful if you want a chant-like effect
     #     or deliberate echoing.
     FREQUENCY_PENALTY: float = 1.35
+    FREQUENCY_PENALTY_slave: float = 0.00 # for tag and eval
 
     # Repeat penalty: reduces the chance of the model reusing the exact same token sequences.
     #   • Works multiplicatively on token probabilities—tokens that have already appeared get
@@ -49,6 +53,7 @@ class Config:
     #   • Values < 1.0 actually *reward* repetition, which can be useful for poetic refrains,
     #     mantras, or stylistic echoing.
     REPEAT_PENALTY: float = 1.25
+    REPEAT_PENALTY_slave: float = 1.0 # for tag and eval
 
     # Presence penalty: nudges the model to introduce new topics or entities instead of sticking to old ones.
     #   • Also ranges from –2.0 to +2.0.
@@ -57,6 +62,7 @@ class Config:
     #   • Negative values make the model more comfortable staying on the same topic and re-mentioning
     #     existing entities, which can be handy for emphasis or looping back to earlier details.
     PRESENCE_PENALTY: float = 0.20
+    PRESENCE_PENALTY_slave: float = -0.20 # for tag and eval
 
     """
     Choose model here:
@@ -114,7 +120,7 @@ class Config:
     # If a paragraph comes out short (every 1000 or so),
     # you can just click continue and the LLM will finish it.
     # I don't think this should be changed, certainly not lowered.
-    MAX_GENERATION_TOKENS: int = 350
+    MAX_GENERATION_TOKENS: int = 275
 
     ##########
     ###
