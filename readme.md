@@ -26,6 +26,7 @@ Pretty self-explanatory. The LLM is "abliterated" - meaning you should never see
 - **Curated:**
 We have a GameMaster analyze attempted player actions for its outcome (success/failure, effect...)
 That result is then passed to the "writer" persona to generate new text.
+Think of it like a deep think function.
 
 - **Human-like memory:**
 When we continue the story we feed the LLM as much context as possible:
@@ -36,8 +37,9 @@ When we continue the story we feed the LLM as much context as possible:
   Long term memories are selectively chosen by relevance and weighed, assembled into chronological order and given to the LLM.
 
 - **"Multiple personalities":**
-The LLM is (possibly) prompted a total of five times per "generation" for
+The LLM is (possibly) prompted a total of siv times per "generation" for
   - generate (new, with and without player action),
+  - evaluate player action for success/failure and outcome
   - summarize from player action,
   - create tags for that player action,
   - summarize mid-term memories,
