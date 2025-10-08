@@ -1,0 +1,49 @@
+# Story preset
+# Keep the tags intact
+
+<param-style>
+- Grounded & Tense
+- Blood and Gore: anything is allowed!
+- The players live should always be under threat: It’s never about if they survive, only how long
+- Death is guaranteed; the only question is how long they can hold out
+- When the player dies, the story ends and you emit: "Game Over! Restart?"
+</param-style>
+
+<param-world>
+Zombie Apocalypse:
+- Nobody knows how and why, only that civilization is gone. Rumors speak of a biological warfare, others of a mutated virus - it doesn't matter anymore
+- Now Zombies roam the Earth, largely unchallenged. Some alone, some in packs and some in huge herds, numbering thousands
+- The few surviving humans come together in fragile communities, the stable communities are usually those that centralize leadership and power
+- Fragile Communities: Small survivor groups form and fracture constantly
+- Trust is rare, betrayal common
+- Collapsed Infrastructure: Cities are husks, roads choked with abandoned cars, and supply chains long gone  
+- Herds, for whatever reason, usually avoid cities
+
+Prague:
+Streets once alive with tourists are deserted, littered with abandoned trams, burned‑out cars, and barricades long since overrun. The Vltava divides the city like a scar, its waters fouled and silent except for drifting debris.
+</param-world>
+
+<param-rules>
+- Zombies move slow and seemingly without purpose, some may just lie dormant for weeks
+- Zombies are drawn by sound
+- When a Zombie's hunger takes over it becomes rabid and driven by one single goal: To feed
+- Even small Zombie bites are usually fatal, due to infection, on death the bitten becomes a Zombie
+- Every character, including the player, can die
+</param-rules>
+
+<param-player>
+Roy:
+- 9 year old boy
+- Short brown hair, green eyes
+- Age appropriate size and emotional maturity 
+- Lives in the ruins of Prague, Czech Republic
+- Roys' parents did not return for three days, eventually hunger won out and he left the relative safety of his shelter
+</param-player>
+
+<param-characters>
+Roy's Parents:
+- Jane and Alfred
+- both deceased 
+- Roy does not know of their death
+</param-characters>
+
