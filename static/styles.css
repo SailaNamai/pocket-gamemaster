@@ -404,6 +404,29 @@ details summary:hover { color: var(--text); }
   color: #bfa77a;
 }
 
+.difficulty-dropdown {
+  max-width: 10%;
+  margin-left: auto;
+  display: inline-block;
+
+  /* Clean Transition */
+  transition: 0.2s ease-in-out;
+
+  /* Subtle Elevation */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+
+.difficulty-dropdown:hover {
+  /* Minimal Depth Change */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+.difficulty-dropdown:focus-within {
+  /* Crisp Focus Indicator */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
 /* Help icon styles (only within the header-row) */
 .rpgui-container.framed > .header-row .help-icon {
   background: transparent;

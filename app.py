@@ -23,6 +23,7 @@ from services.prompts_memory_prefix import write_memory_prefix
 from services.prompts_tag import write_tagging_prompts
 from services.DB_token_budget import write_initial_budget, update_budget
 from services.prompts_eval_action import write_action_eval_bucket
+from services.DB_difficulty import write_difficulty, get_difficulty
 """
 Buttons (Continue = continue_story & player_action, ...)
 """
@@ -120,9 +121,12 @@ def initial_state():
       },
       "budget": {
           "n_ctx": get_n_ctx(),
-          "recent":get_recent(),
-          "mid":get_mid(),
-          "long":get_long()
+          "recent": get_recent(),
+          "mid": get_mid(),
+          "long": get_long()
+      },
+      "difficulty": {
+          "diff_setting": get_difficulty(),
       }
     })
 # Load story from DB on first visit
@@ -226,6 +230,17 @@ def api_update_budget():
         return jsonify(message='insane_request'), 400
 
     write_budget(int(n_ctx), int(recent), int(mid), int(long_))
+    return jsonify(message='update_successful'), 200
+
+# difficulty settings app-route
+@app.route('/api/update_difficulty', methods=['POST'])
+def api_update_difficulty():
+    data = request.get_json() or {}
+
+    # pass difficulty and write to DB
+    difficulty = data.get('difficulty')
+    write_difficulty(difficulty)
+
     return jsonify(message='update_successful'), 200
 
 # This stuff here runs once everytime you do python app.py

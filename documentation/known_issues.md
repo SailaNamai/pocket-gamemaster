@@ -1,44 +1,26 @@
 
 ##### Important
-## 1: (improved - observing) narrative drift/degradation
+## 1: (further improved - observing) narrative drift/degradation
 ## 1: 2nd person pov breaking
-## 1: Response length inflation - when the story grows?
-It begins reasonable but paragraphs on occassion begin to bust the 350 limit.
-Possible causes:
-- additional context it wants to incorporate
-- weakening adherence to the first part of the prompt, when enough memories are added.
-Possible solution:
-- Stronger guard rails - those are pretty explicit already
-- Fall back to only taking the 1st paragraph - pacing issues
-- Revisit the whole 6 paragraph approach: Think about how the story would unfold in the next n paragraphs and then write the next one. - could work...
-- Re-feed the system prompt at the end (Remember: You are...) - feels dirty, would like to avoid, also ~100 tokens
-- merge with 1: (improved - observing) 2nd person pov breaking
-- PlayerAction-Tag taints the "prose" with perspective I vs you, different writing style
-- added explicit instruction to treat as data
-	- that should help alot with the drift on longer stories
-- I thinks its unreasonable to get all the LLM out of the writing but we are on a good way, I think.
-- should be much improved now
-- also took a huge deal of the "pompousness" out of the writing
 
-## 2: (do) tag json looks solid now
+## 2: (solved - observing) tag json looks solid now
 # Note: When the json was broken it was easy to filter out player from character... 
 # Note: now that it gets it right i need to think about determining who the player is... that skews the rating - always present.
 - location: disallow partial scoring for unknown, abandoned? - that kind of fluff
-- filter any "(text)" from character tags (solved)
-- tag recent has no player tag wrap (solved)
 
 ## 3: (do) Think about a reddit post
 - readme.md requires install instruction
 - I don't have a git account
 - I do now - upload successful
+- https://www.reddit.com/r/LocalLLM/ ?
 
-## 4: (solved) Github always builds at git name
-- which is unlike my documentation pgm vs pocket-gamemaster
-- which sucks
-- maybe github allows clone bla as ble
-- i feel stupid now
+## 4: (do) It's really hard to kill Roy
+- It's not that the GM doesn't decide it...
+- It's like taking action works like a keep "alive ping"
+- Maybe something like: Don't unnecessarily extend... hm
+- Or: Resolve as critical failure if: overwhelming odds against...
 
-## 5: (solved) 
+## 5: (observe)
 
 ## 6: (solved)
 
@@ -46,17 +28,13 @@ Possible solution:
 
 ##### Don't fix?
 ## -1. We clean the tags constantly instead of persisting our cleaned version into DB
-Makes little difference from a performance difference
+Makes little difference from a performance perspective
 
 ## 0. User parameters too big
 Insanely long user parameters will reduce long-term memory budget to 0.
 Might push the system prompts out of context.
 
-## 1. (unsure if still relevant) LLM finishes with What will you do next?
-- The woman's gaze drifts upwards from her feet, her eyes focusing on yours as she struggles to respond. A faint crease forms between her eyebrows as she winces in pain with each step, yet a spark of determination ignites within those sunken depths when you ask about finding help. "Not... much," she manages to stammer out, her voice hoarse and barely audible over the growing cacophony behind you both. "Main Street's all but abandoned... few scattered survivors here and there." She pauses, swallowing hard as a fresh wave of pain crosses her face before continuing in a low tone: "But I know someone who might be able to help us - my friend Marcus lives on Elm Street, just two blocks from here. He's got experience with the dead... if we can make it that far." As she finishes speaking, you glance back and see that the zombies are mere feet away now, their slow but relentless shamble a stark reminder of how little time you have to act. You spot a dumpster nearby, its metal lid askew - could it serve as an impromptu shield if needed? The alleyway's entrance beckons just ahead, promising potential shelter from the horde behind. What will you do next?
-
-I think it's okay to let this slide, and it fits well here.
-
+## 1. 
 
 ## 2. (could be solved - observing)
 If the user clicks continue often the LLM will generate a player action to advance the narrative.
@@ -72,7 +50,7 @@ Might even turn that into a proper action... Its correctly written in I, the par
 I could cheat that in the front end... make two paragraphs out of it. p-data with player action.
 That should push it into the DB. I have no idea what happens when we add an id in between two ids like 50,51...
 That could be seriously annoying.
-Note: Gotta find out anyway, people might add paragraphs anywhere.
+# Note: Gotta find out anyway, people might add paragraphs anywhere.
 Ok, so that inserts cleanly already - no issue then.
 If I leave the PlayerAction tag in the DB it'll propagate as allowed writing style inside a paragraph...
 Allow the behaviour, catch in front end, turn in two paragraphs, then push back to db
@@ -81,9 +59,10 @@ If the player is confronted with an action that he didn't take? ... yeah, no.
 Can scrub it and change 1st to 2nd person. You ask about Mrs. Jenkins. As the silence between...
 2nd person then gets passed as an edit to DB and removes the tag there.
 You stop when a PlayerAction.../PlayerAction would be required.
- Its because of this part of the instruction.
+It's because of this part of the instruction.
 It thinks it can't continue without the needed action so it makes one. Removing it would have it overshoot again.
-It might not even think it needs a player action. It might just think it needs an action every 1 or 2 paragraphs because thats the structure I've been feeding it...
+It might not even think it needs a player action. 
+It might just think it needs an action every 1 or 2 paragraphs because that's the structure I've been feeding it...
 Hm: 
 You stop when a PlayerAction.../PlayerAction would be narratively required.
 

@@ -2,12 +2,13 @@
 
 from services.DB_token_cost import count_tokens
 from services.DB_access_pipeline import write_connection
+from services.DB_difficulty import get_difficulty
 
-# meant to eventually select the front-end provided difficulty setting
-def get_eval_action_difficulty():
-    return "Placeholder"
+"""
+We galaxy-brain cheat: easy = medium, medium = hard, hard = souls like death-march
+"""
 
-# We galaxy-brain cheat easy=medium, medium=hard, hard=souls like death-march
+# easy = medium
 def eval_action_easy():
     return """Evaluation Rules (Medium Difficulty):
 This is the medium baseline: outcomes should balance fairness and challenge. 
@@ -22,7 +23,7 @@ world resists easy victories but rewards strong advantages.
 - If outcome is ambiguous or unsupported, default to failure
 - Impossible actions (those that contradict established setting rules, physical laws, or available resources) always fail"""
 
-# default
+# medium = hard
 def eval_action_med():
     return """Evaluation Rules (Hard Difficulty):
 This is the hard baseline: outcomes favor failure unless the character has overwhelming advantage. 
@@ -38,6 +39,7 @@ Unclear or marginal cases lean toward failure.
 - If outcome is ambiguous, unsupported, or only marginally justified, fail
 - Impossible actions (those that contradict established setting rules, physical laws, or available resources) always fail"""
 
+# hard = death-march
 def eval_action_hard():
     return """Evaluation Rules (Souls-Like Death-March Difficulty):
 This is the cruel baseline: the world is actively hostile, indifferent to fairness, and punishes even small mistakes. 
@@ -55,6 +57,7 @@ Every victory extracts a toll.
 - Failure is rarely clean: it introduces new threats, worsens conditions, or escalates danger
 - Success is never free: it drains resources, inflicts scars, or sets up the next trial"""
 
+# Tailor specific rulesets here
 def eval_sheet():
     return """
 - For every character involved in the action, personalize a complete sheet using the template
@@ -105,7 +108,7 @@ Equipment:
 - Do not invent or embellish beyond what is supported
 
 Currency/Wealth:
-- Summarize general wealth level and immediate access to resources
+- Summarize general wealth level and infer the immediate access to these resources
 
 Status Effects:
 - Note any current conditions that alter performance (e.g., wounded, poisoned, exhausted, inspired)
@@ -124,7 +127,7 @@ def write_action_eval_bucket():
     easy = eval_action_easy()
     med = eval_action_med()
     hard = eval_action_hard()
-    diff = get_eval_action_difficulty()
+    diff = get_difficulty()
 
     # Concatenate all text for token counting
     all_together = "\n".join([sheet, easy, med, hard, diff])
@@ -146,7 +149,6 @@ def write_action_eval_bucket():
             token_cost = excluded.token_cost;
         """
         cursor.execute(sql, (sheet, easy, med, hard, diff, tokencost))
-        conn.commit()
 
 """
 Difficulty outtakes

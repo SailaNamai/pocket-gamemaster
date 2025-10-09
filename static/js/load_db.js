@@ -58,6 +58,19 @@ function loadInitialStateAndHistory() {
       console.warn('Failed to populate budget fields from initial state', e);
     }
 
+    // 1c) Populate difficulty dropdown from initial state
+    try {
+      const diff = initial.difficulty?.diff_setting;
+      if (diff) {
+        const select = document.getElementById('difficulty-select');
+        if (select) {
+          select.value = diff; // sets the dropdown to easy/medium/hard
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to populate difficulty from initial state', e);
+    }
+
     // 2) Render the story paragraphs
     const storyEl = document.getElementById('story-history');
     storyEl.innerHTML = '';

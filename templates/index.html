@@ -15,17 +15,26 @@
       <div class="header-row">
         <div class="header-title">
             <img src="{{ url_for('static', filename='favicon.png') }}" alt="" class="title-favicon">
-            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 5.03.20251008)</small>
+            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 5.05.20251009)</small>
         </div>
             {% include 'settings-modal.html' %}
             {% include 'delete-modal.html' %}
             {% include 'help-modal.html' %}
+
+            <!-- Difficulty dropdown -->
+            <select id="difficulty-select" class="difficulty-dropdown" aria-label="Select difficulty" title="Difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <!-- Settings button -->
             <button id="open-settings" class="settings-icon" aria-label="Open settings" title="Settings" type="button">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
                 <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
                 </svg>
             </button>
+            <!-- Delete button -->
             <button id="delete-button" class="trash-icon" aria-label="Delete" title="Delete" type="button">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M3 6h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
@@ -34,6 +43,7 @@
                     <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                 </svg>
             </button>
+            <!-- Help button -->
             <button id="open-help" class="help-icon" aria-label="Open help" title="Help" type="button">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -175,6 +185,8 @@
     <script src="{{ url_for('static', filename='js/help-modal.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/delete-modal.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/settings-modal.js') }}" defer></script>
+    <!-- Difficulty dropdown -->
+    <script src="{{ url_for('static', filename='js/difficulty-setting.js') }}" defer></script>
 
     <!-- On load: scroll down story-history, memories -->
     <script>
@@ -235,27 +247,43 @@
     });
     </script>
 
-    <!-- Disable/Enable spellcheck on story-history by focus -->
+    <!-- Disable/Enable spellcheck on text-fields by focus -->
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const storyArea = document.getElementById("story-history");
-      if (!storyArea) return;
+      // Collect all editable fields we want to manage
+      const targets = [
+        document.getElementById("story-history"),
+        document.querySelector(".mid-synopsis-area"),
+        document.querySelector(".long-synopsis-area"),
+        document.getElementById("param-style"),
+        document.getElementById("param-world"),
+        document.getElementById("param-rules"),
+        document.getElementById("param-player"),
+        document.getElementById("param-characters")
+      ].filter(Boolean); // remove nulls if some elements aren’t present
 
-      // start with spellcheck off
-      storyArea.setAttribute("spellcheck", "false");
+      targets.forEach(el => {
+        // start with spellcheck off
+        el.setAttribute("spellcheck", "false");
 
-      storyArea.addEventListener("focus", function() {
-        storyArea.setAttribute("spellcheck", "true");
-        // force browser to re-check
-        storyArea.setAttribute("contenteditable", "false");
-        storyArea.setAttribute("contenteditable", "true");
-      });
+        el.addEventListener("focus", function() {
+          el.setAttribute("spellcheck", "true");
 
-      storyArea.addEventListener("blur", function() {
-        storyArea.setAttribute("spellcheck", "false");
-        // force browser to drop underlines
-        storyArea.setAttribute("contenteditable", "false");
-        storyArea.setAttribute("contenteditable", "true");
+          // If it's contenteditable, toggle to force re-check
+          if (el.hasAttribute("contenteditable")) {
+            el.setAttribute("contenteditable", "false");
+            el.setAttribute("contenteditable", "true");
+          }
+        });
+
+        el.addEventListener("blur", function() {
+          el.setAttribute("spellcheck", "false");
+
+          if (el.hasAttribute("contenteditable")) {
+            el.setAttribute("contenteditable", "false");
+            el.setAttribute("contenteditable", "true");
+          }
+        });
       });
     });
     </script>
