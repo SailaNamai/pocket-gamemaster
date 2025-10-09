@@ -6,13 +6,13 @@ Find extensive install instructions at
 ```console
 ...pgm/documentation/documentation.html
 ```
-#### *PGM* is a free, open source, locally run, text based, multi-personality LLM powered, curated RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
+#### *PGM* is a free, open source, locally run, text based, multi-personality, LLM powered, curated RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
 
 It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
 
 It is designed to:
 - Provide an actual gaming experience
-- Extend context length noticeably and deal with full context scenarios graciously 
+- Extend context length noticeably and deal with full context scenarios gracefully 
 - Allow any modification you might want with relative ease
 
 Let's unpack that ;)
@@ -84,9 +84,9 @@ When we continue the story we feed the LLM as much context as possible:
   - It will fit around 50k tokens into the (dynamic) full context window.
   - Once that context window is full:
     - rate long-term memories for salience (present characters, emotional state, location...) in the current situation.
-    - and then fill the budget with the most important memories
+    - and then fill the budget accordingly
 
-That means we always have most relevant context available. 
+That means we always have the most relevant context available. 
 
 Will it still forget the scar on the forehead it made up for character x? Yeah - that kind of fluff is not retained - but the important stuff it should always remember.
 

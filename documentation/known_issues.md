@@ -14,13 +14,17 @@
 - I do now - upload successful
 - https://www.reddit.com/r/LocalLLM/ ?
 
-## 4: (do) It's really hard to kill Roy
+## 4: (observe) GM tweaking - It's really hard to kill Roy
 - It's not that the GM doesn't decide it...
 - It's like taking action works like a keep "alive ping"
 - Maybe something like: Don't unnecessarily extend... hm
 - Or: Resolve as critical failure if: overwhelming odds against...
+- Or: If the player acts in a combat scenario and the action has no effect: resolve the opponents response immediately
 
-## 5: (observe)
+- When presented with previous action: paragraph pairs - you lack info on the "roll" - don't overvalue these
+
+## 5: (investigate) Deleting paragraphs = continue, even if should be action?
+
 
 ## 6: (solved)
 

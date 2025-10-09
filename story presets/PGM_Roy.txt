@@ -6,7 +6,6 @@
 - Blood and Gore: anything is allowed!
 - The players live should always be under threat: It’s never about if they survive, only how long
 - Death is guaranteed; the only question is how long they can hold out
-- When the player dies, the story ends and you emit: "Game Over! Restart?"
 </param-style>
 
 <param-world>
@@ -27,6 +26,7 @@ Streets once alive with tourists are deserted, littered with abandoned trams, bu
 - Zombies move slow and seemingly without purpose, some may just lie dormant for weeks
 - Zombies are drawn by sound
 - When a Zombie's hunger takes over it becomes rabid and driven by one single goal: To feed
+- Rabid Zombies can reach surprising speed
 - Even small Zombie bites are usually fatal, due to infection, on death the bitten becomes a Zombie
 - Every character, including the player, can die
 </param-rules>

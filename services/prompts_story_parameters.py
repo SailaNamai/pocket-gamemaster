@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Be careful, when you change it.
 def update_writing_style(user_value: str):
     hardcoded = """Writing style:
-Always refer to the player in the second person ("You..."):
+Always refer to the player character in the second person ("You..."):
     Good example:
     "You are being watched..."
     Bad examples:
