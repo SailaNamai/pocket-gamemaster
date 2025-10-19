@@ -7,7 +7,17 @@ function loadInitialStateAndHistory() {
   ])
   .then(([initial, historyData]) => {
     // 1) Populate story parameters + memory
-    document.getElementById('param-style').value      = initial.story_parameters.writing_style;
+    const rawStyle = initial.story_parameters.writing_style;
+    // Strip any leading or trailing indentation before putting it in the UI
+    let cleanStyle = '';
+    if (typeof rawStyle === 'string') {
+      cleanStyle = rawStyle
+        .split('\n')
+        .map(line => line.trim())
+        .join('\n');
+    }
+
+    document.getElementById('param-style').value      = cleanStyle;
     document.getElementById('param-world').value      = initial.story_parameters.world_setting;
     document.getElementById('param-rules').value      = initial.story_parameters.rules;
     document.getElementById('param-player').value     = initial.story_parameters.player;
@@ -74,16 +84,25 @@ function loadInitialStateAndHistory() {
     // 2) Render the story paragraphs
     const storyEl = document.getElementById('story-history');
     storyEl.innerHTML = '';
-    storyEl.innerHTML = historyData.paragraphs
-      .map(p =>
-        `<p
-           data-paragraph-id="${p.id}"
-           data-story-id="${p.story_id}"
-         >${p.content}</p>`
-      )
-      .join('');
+
+    historyData.paragraphs.forEach(p => {
+      const el = document.createElement('p');
+      el.dataset.paragraphId = p.id;
+      el.dataset.storyId     = p.story_id;
+
+      // Only attach outcome + tooltip if this is a user action paragraph
+      if (p.story_id === 'continue_with_UserAction') {
+        el.dataset.outcome = p.outcome || '';
+        el.title           = p.outcome || '';
+      }
+
+      el.textContent = p.content;   // safe: no HTML parsing
+      storyEl.appendChild(el);
+    });
+
     window.Snapshot.notifyBackendUpdate('#story-history');
     styleStoryHistory();
+
   })
   .catch(err => {
     console.error('Failed to load story history', err);

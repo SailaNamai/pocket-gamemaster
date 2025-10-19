@@ -6,7 +6,9 @@ from services.DB_token_cost import update_story_parameters_cost, update_system_p
 from services.DB_access_pipeline import connect
 from services.prompt_builder_memory_mid import build_mid_memory
 from services.prompt_builder_memory_long import build_long_memory
+from services.prompt_builder_indent_helper import indent_one, indent_three, indent_two
 from services.llm_config import GlobalVars, Config
+from services.prompts_kickoffs import Kickoffs
 
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'evaluate_action.log'
@@ -47,8 +49,8 @@ def get_eval_player_action_prompts() -> Tuple[str, str]:
         # --- Load story parameters ---
         cur.execute("""
             SELECT writing_style_hardcode, writing_style,
-                   world_setting_hardcode, world_setting,
-                   rules_hardcode, rules,
+                   world_setting_hardcode, world_setting, prepend_world_setting,
+                   rules_hardcode, rules, prepend_rules,
                    prepend_player, player,
                    prepend_characters, characters
             FROM story_parameters
@@ -56,8 +58,8 @@ def get_eval_player_action_prompts() -> Tuple[str, str]:
         """)
         (
             style_hc, style,
-            world_hc, world,
-            rules_hc, rules,
+            world_hc, world, world_prepend,
+            rules_hc, rules, rules_prepend,
             prepend_player, player,
             prepend_chars, chars
         ) = cur.fetchone()
@@ -76,27 +78,44 @@ def get_eval_player_action_prompts() -> Tuple[str, str]:
     mid_memory = build_mid_memory()
     long_memory = build_long_memory()
 
+    # indent and number to fit the structure
+    ind_world_pre = indent_two(world_prepend)
+    ind_world = indent_three(world)
+    #ind_rules_hc = indent_one(rules_hc)
+    ind_rules_pre = indent_two(rules_prepend)
+    ind_rules = indent_three(rules)
+    num_chars = "6. " + prepend_chars
+    ind_prepend_chars = indent_one(num_chars)
+    ind_chars = indent_two(chars)
+    num_player = "7. " + prepend_player
+    ind_prepend_player = indent_one(num_player)
+    ind_player = indent_two(player)
+    ind_prepend_long = indent_two(long_memory_hc)
+    ind_long_memory = indent_three(long_memory)
+    ind_prepend_mid = indent_two(mid_memory_hc)
+    ind_mid_memory = indent_three(mid_memory)
+
     # System prompt assembly
     system_segments = [
-        eval_system.strip(),
-        ruleset.strip(),
-        eval_sheet.strip(),
-        world_hc.strip(), world.strip(),
-        rules_hc.strip(), rules.strip(),
-        prepend_chars.strip(), chars.strip(),
-        prepend_player.strip(), player.strip(),
-        long_memory_hc.strip(), long_memory.strip(),
-        mid_memory_hc.strip(), mid_memory.strip()
+        eval_system,
+        ruleset,
+        eval_sheet,
+        rules_hc, ind_rules_pre, ind_rules,
+        world_hc, ind_world_pre, ind_world,
+        ind_prepend_chars, ind_chars,
+        ind_prepend_player, ind_player,
+        ind_prepend_long, ind_long_memory,
+        ind_prepend_mid, ind_mid_memory
     ]
     system_prompt = "\n\n".join(filter(None, system_segments))
 
     # User prompt assembly
     # kickoff
-    kickoff = "Attempted action to evaluate:"
+    kickoff = Kickoffs.eval_kickoff
 
     # most recent paragraph (highest id)
     recent_para = rows[0] if rows else None
-    action_text = f"<Evaluate>{recent_para['content'].strip()}</Evaluate>"
+    action_text = f"<Evaluate>{recent_para['content']}</Evaluate>"
 
     user_prompt = "\n\n".join([kickoff, action_text])
 
@@ -106,7 +125,8 @@ def get_eval_player_action_prompts() -> Tuple[str, str]:
 
     # Append system prompt with recent memories (respect token budget)
     recent_memories = _choose_memories(tc)
-    system_prompt = f"{system_prompt}\n\n{recent_memories}" if recent_memories else system_prompt
+    ind_recent_memories = indent_two(recent_memories)
+    system_prompt = f"{system_prompt}\n\n{ind_recent_memories}"
 
     # Log both prompts
     with open(log_path, 'w', encoding='utf-8') as log_f:
@@ -166,9 +186,12 @@ def _choose_memories(tc: int) -> str:
 
     texts = []
     for r in selected:
-        text = r["content"].strip()
-        if r["story_id"] == "continue_with_PlayerAction":
+        text = r["content"]
+        if r["story_id"] == "continue_with_UserAction":
             text = f"<PreviousAction>{text}</PreviousAction>"
         texts.append(text)
 
-    return "Here is what happened most recently:\n\n" + "\n\n".join(texts)
+    joined = "\n\n".join(texts)
+    indented = indent_one(joined)
+
+    return "Here is what happened most recently (short term memory):\n\n" + indented

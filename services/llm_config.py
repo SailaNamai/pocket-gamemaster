@@ -10,19 +10,24 @@ LLM config
 https://github.com/ggml-org/llama.cpp/discussions/15709
 """
 class Config:
-    # Sampling temperature: controls how “risky” the model is when choosing each next word.
-    #   • Low values (e.g., 0.0–0.3) make the model extremely cautious. It almost always picks the single
-    #     most likely next word, leading to very predictable, repetitive, or “robotic” text.
-    #   • Medium values (around 0.5–0.7) balance reliability with creativity. The model still leans toward
-    #     common words but will occasionally branch out to add variety and naturalness.
-    #   • High values (0.8–1.0 and above) encourage the model to consider less likely words. The result
-    #     can be more surprising, vivid, or unconventional—great for brainstorming or poetic passages,
-    #     but you may see odd word choices or looseness in logic.
-    TEMPERATURE: float = 0.9 # used in "raw" story generation
-    TEMPERATURE_SUM_MID: float = 0.7 # used in summarizing the raw story to mid-term memory
-    TEMPERATURE_SUM_LONG: float = 0.5 # used in condensing mid-term memories into long-term memory
-    TEMPERATURE_TAGS: float = 0.3 # used in creating tags (keep low or the json will be faulty/fail).
-    TEMPERATURE_EVAL: float = 0.2  # used in evaluation of player action outcome
+    """
+    GPT doesn't know shit about these temps. Some models will produce utter gibberish
+    with seemingly normal values (0-1.0).
+    Rule of thumb:
+        - Find the "sweet spot": Could be at 0.65 or 0.16
+        - Going higher: more "lyrical", adventurous, lessened prompt adherence
+        - Going lower: more robotic, stronger prompt adherence, too low: tends to "listify" stuff
+    """
+    TEMPERATURE: float = 0.32 # used in "raw" story generation
+    TEMPERATURE_NEW: float = 0.42  # used in new story generation
+    TEMPERATURE_SUM_MID: float = 0.20 # used in summarizing the raw story to mid-term memory
+    TEMPERATURE_SUM_LONG: float = 0.10 # used in condensing mid-term memories into long-term memory
+    """
+    Do not change EVAL/TAGS without confirming in the DB that the outcome is structurally correct over several tests.
+    If there is more than one outcome block, trailing text or so: the writers get confused and drinks itself to death.
+    """
+    TEMPERATURE_EVAL: float = 0.06 # used in evaluation of player action outcome (keep low or the GM turns insane).
+    TEMPERATURE_TAGS: float = 0.06  # used in creating tags (keep low or the json will be faulty/fail).
 
     # Nucleus sampling cutoff (top_p): trims the “candidate list” to only the most probable words.
     #   • Imagine the model ranks all possible next words by likelihood. top_p defines how much of
@@ -32,7 +37,8 @@ class Config:
     #     occasional surprises among the 90% of likely words.
     #   • A lower top_p (e.g., 0.5) makes the model extremely conservative (only the very top words),
     #     while a top_p near 1.0 opens it up to almost every possibility.
-    TOP_P: float = 0.8
+    TOP_P: float = 0.85
+    #TOP_P: float = 0.8
     TOP_P_slave: float = 0.5 # for tag and eval
 
     # Frequency penalty: discourages the model from repeating the same words over and over.
@@ -41,7 +47,8 @@ class Config:
     #     fresh phrasing. A 0.5–1.0 penalty can reduce stutters like “the the the” or overused buzzwords.
     #   • Values < 0.0 actually encourage repetition, which can be useful if you want a chant-like effect
     #     or deliberate echoing.
-    FREQUENCY_PENALTY: float = 1.35
+    FREQUENCY_PENALTY: float = 0.00
+    #FREQUENCY_PENALTY: float = 1.25
     FREQUENCY_PENALTY_slave: float = 0.00 # for tag and eval
 
     # Repeat penalty: reduces the chance of the model reusing the exact same token sequences.
@@ -52,7 +59,7 @@ class Config:
     #     while 1.5+ can make the model aggressively avoid repeating itself.
     #   • Values < 1.0 actually *reward* repetition, which can be useful for poetic refrains,
     #     mantras, or stylistic echoing.
-    REPEAT_PENALTY: float = 1.25
+    REPEAT_PENALTY: float = 1.00
     REPEAT_PENALTY_slave: float = 1.0 # for tag and eval
 
     # Presence penalty: nudges the model to introduce new topics or entities instead of sticking to old ones.
@@ -62,6 +69,7 @@ class Config:
     #   • Negative values make the model more comfortable staying on the same topic and re-mentioning
     #     existing entities, which can be handy for emphasis or looping back to earlier details.
     PRESENCE_PENALTY: float = 0.20
+    PRESENCE_PENALTY_CONTINUE: float = 1.42
     PRESENCE_PENALTY_slave: float = -0.20 # for tag and eval
 
     """
@@ -69,21 +77,56 @@ class Config:
     Comment the line you no longer want with #
     Remove the # from the MODEL_PATH = line you want to use.
     (Python expects the indent to stay intact.)
+    https://huggingface.co/NousResearch/Nous-Hermes-2-Mistral-7B-DPO-GGUF?show_file_info=Nous-Hermes-2-Mistral-7B-DPO.Q8_0.gguf
+    https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF
+    https://huggingface.co/bartowski/Mistral-Nemo-Instruct-2407-GGUF?show_file_info=Mistral-Nemo-Instruct-2407-Q8_0.gguf
+    https://huggingface.co/DevQuasar/mlabonne.gemma-3-12b-it-abliterated-v2-GGUF
+    https://huggingface.co/mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF
+    https://huggingface.co/SicariusSicariiStuff/Impish_Mind_8B
+    https://huggingface.co/Lewdiculous/Lumimaid-v0.2-8B-GGUF-IQ-Imatrix
+    https://huggingface.co/DavidAU/DarkSapling-V2-Ultra-Quality-7B-GGUF?show_file_info=DarkSapling-V2-Ultra-Quality-7B-Q8_0.gguf
+    https://huggingface.co/DreadPoor/Krix-12B-Model_Stock
+    
+    ==== GM ====
+    https://huggingface.co/mradermacher/Dobby-Mini-Leashed-Llama-3.1-8B-GGUF?show_file_info=Dobby-Mini-Leashed-Llama-3.1-8B.Q8_0.gguf
+    
+    Check model page for system prompt instructions:
+    https://huggingface.co/bartowski/Llama-3.1-8B-Lexi-Uncensored-V2-GGUF?show_file_info=Llama-3.1-8B-Lexi-Uncensored-V2-Q8_0.gguf
+    --- MODEL_PATH: absolute path to your local GGUF model file.
+    --- BASE is PATH_TO_PGM/pgm/
     """
-    # MODEL_PATH: absolute path to your local GGUF model file.
-    # BASE is PATH_TO_PGM/pgm/
 
-    # Q8_0 for best precision (should be fine with 16gb VRAM and full context):
-    # "NeuralDaredevil-8B-abliterated-Q8_0.gguf"
-    MODEL_PATH = BASE / "NeuralDaredevil-8B-abliterated-Q8_0.gguf"
+    """
+    GM LLM
+    """
+    #MODEL_PATH_GM = BASE / "DarkSapling-V2-Ultra-Quality-7B-Q8_0.gguf"
+    #MODEL_PATH_GM = BASE / "Dobby-Mini-Leashed-Llama-3.1-8B.Q8_0.gguf"
+    #MODEL_PATH_GM = BASE / "Lumimaid-v0.2-8B-Q8_0-imat.gguf" # has no issues killing the PC
+    #MODEL_PATH_GM = BASE / "Llama-3.1-8B-Lexi-Uncensored-V2-Q8_0.gguf"
+    MODEL_PATH_GM = BASE / "krix-12b-model_stock-q6_k.gguf"
+
+    """
+    Story LLM
+    """
+    # Q8_0 for best precision:
+    #MODEL_PATH = BASE / "Wingless_Imp_8B.Q8_0.gguf" # i like this with .32 temp
+    #MODEL_PATH = BASE / "Lumimaid-v0.2-8B-Q8_0-imat.gguf" # writing seemed nice
+    #MODEL_PATH = BASE / "DarkSapling-V2-Ultra-Quality-7B-Q8_0.gguf" # could be a contender
+    #MODEL_PATH = BASE / "SicariusSicariiStuff_Impish_Mind_8B-Q8_HA.gguf" #this thing is... different - be warned - temp: 0.18 (craps out for some reason even with small temp changes).
+    #MODEL_PATH = BASE / "glm-4-9b-chat-abliterated.Q8_0.gguf" # doesn't work without also slicing at the end marker - also veeery slow.
+    #MODEL_PATH = BASE / "glm-z1-9b-0414-abliterated-q8_0.gguf" # Ok, so this is some crazy ass deepthink model
+    #MODEL_PATH = BASE / "NeuralDaredevil-8B-abliterated-Q8_0.gguf" # I like the story here, but it can't go over 8k context
+    #MODEL_PATH = BASE / "Nous-Hermes-2-Mistral-7B-DPO.Q8_0.gguf" # 32k context is fake: 9-10k max - i decided against, safe is 8k, story is okay
+    #MODEL_PATH = BASE / "Mistral-Nemo-Instruct-2407-Q8_0.gguf" # doesn't work without pipeline change
+    #MODEL_PATH = BASE / "meta-llama-3.1-8b-instruct-abliterated.Q8_0.gguf" # has the context but didn't test much
 
     # Q6_K for medium hardware:
-    # "NeuralDaredevil-8B-abliterated-Q6_K.gguf"
+    MODEL_PATH = BASE / "krix-12b-model_stock-q6_k.gguf"
+    #MODEL_PATH = BASE / "mlabonne.gemma-3-12b-it-abliterated-v2.Q6_K.gguf" # I haven't really figured out how to talk to these gemma things (and i won't accept the license)
     #MODEL_PATH = BASE / "NeuralDaredevil-8B-abliterated-Q6_K.gguf"
 
     # Q4_K_M for weak hardware:
     # "NeuralDaredevil-8B-abliterated-Q4_K_M.gguf"
-    # https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF
     #MODEL_PATH = BASE / "NeuralDaredevil-8B-abliterated-Q4_K_M.gguf"
     """
     End of model choosing block.
@@ -93,7 +136,15 @@ class Config:
     # needs to be adapted to the model you are planning to use (usually found somewhere on origin homepage).
     # I think that PGM might work with any llama3 based model without changing this
     # or how we trim the output, but didn't test yet
-    TEMPLATE_PATH = BASE / "llama3_chat.jinja"
+    TEMPLATE_PATH = BASE / "krix.jinja" # Krix
+    #TEMPLATE_PATH = BASE / "NeuralDaredevil.jinja" # also llama-3.1 (lumimaid, dark sapling)
+    #TEMPLATE_PATH = BASE / "Nous-Hermes-2.jinja"
+    #TEMPLATE_PATH = BASE / "Mistral-Nemo-Instruct-2407.jinja"
+    #TEMPLATE_PATH = BASE / "Gemma-3-12b.jinja"
+    #TEMPLATE_PATH = BASE / "glm4.jinja"
+    #TEMPLATE_PATH = BASE / "impish-mind.jinja"
+
+    TEMPLATE_PATH_GM = BASE / "krix.jinja" # also llama-3.1 (lumimaid, dark sapling)
 
     # path to llama.cpp (change according to "global" vs "local" install).
     # I suggest you build your llama.cpp inside pgm root: .../pgm/llama.cpp
@@ -120,7 +171,7 @@ class Config:
     # If a paragraph comes out short (every 1000 or so),
     # you can just click continue and the LLM will finish it.
     # I don't think this should be changed, certainly not lowered.
-    MAX_GENERATION_TOKENS: int = 275
+    MAX_GENERATION_TOKENS: int = 150
 
     ##########
     ###
@@ -218,10 +269,11 @@ class GlobalVars:
     """
     Sorry if an old comment or whatever brought you here. Do not change these here, enter values in the frontend (cog icon).
     """
-    # allowed tokens for recent paragraphs, conveyor belt/rolling window (includes previous user actions)
+    # allowed tokens for recent paragraphs, conveyor belt/rolling window
     tc_budget_recent_paragraphs = get_recent()
-    # budget for mid-term memory, conveyor belt/rolling window (condensed paragraphs from UserAction to before next UserAction)
+    # budget for mid-term memory, conveyor belt/rolling window
     tc_budget_mid_memories = get_mid()
     # allowed tokens for long-term memories
-    # further condensed mid_memories, evaluated for significance before allowed in, tag weighted relevance scoring
     tc_budget_long_memories = get_long()
+    # context budget for tagging long memories
+    tc_budget_long_tag = 3500

@@ -2,8 +2,8 @@
 # Keep the tags intact
 
 <param-style>
-- Noir 
-- Psychological Thriller 
+- Noir   
+- Psychological Thriller  
 </param-style>
 
 <param-world>
@@ -72,7 +72,7 @@ Selene 'The Moonbeam' of Aquitaine:
 - 3rd generation
 - Clan Malkavian
 - Curse of Malkav: 
-Can only speak in metaphors (prefer animals, music, moonlight, pleasure to kill); 
+Can only speak in metaphors (prefer animals, music, moonlight, death itself); 
 happily chats with the voices in her head; 
 sees wonders in mundane things
 - An ephemeral beauty with long blonde hair
@@ -91,9 +91,9 @@ Prince Victor, aka the Lion:
 - Commands the Lieutenants
 
 Lieutenants (personalities=assigned animal):
-The Wolf (5th generation, Clan Brujah, male),
-The Bear (6th generation, Clan Toreador, male),
-The Fox (6th generation, Clan Lasombra, female),
-The Panther (5th generation, Clan Gangrel, female).
+- the Wolf: 5th generation, Clan Brujah, male
+- the Bear: 6th generation, Clan Toreador, male
+- the Fox: 6th generation, Clan Lasombra, female
+- the Panther: 5th generation, Clan Gangrel, female
 </param-characters>
 

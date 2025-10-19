@@ -8,7 +8,12 @@ Find extensive install instructions at
 ```
 #### *PGM* is a free, open source, locally run, text based, multi-personality, LLM powered, curated RPG with human-like memory pipeline and a relevance scored, weighed, tag based long-term memory.
 
-It gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
+#### Beta5 was proof of concept, with beta8 I'm happy to announce the first playable version:
+- Uncapped context size, now achieves 15-20:1 compression ratios.
+- Upgraded the model to 12b
+- Cleaned the LLM writing (a lot) - its actually comprehensible now
+
+PGM gives you vast parameter control over story and style. You can edit/add/delete any "memory" on the fly.
 
 It is designed to:
 - Provide an actual gaming experience
@@ -38,38 +43,21 @@ Pretty self-explanatory. The LLM is "abliterated" - meaning you should never see
 We have a GameMaster analyze attempted player actions for its outcome (success/failure, effect...)
 That result is then passed to the "writer" persona to generate new text.
 Think of it like a deep think function:
+
+![gameplay1.png](documentation/gameplay1.png)
 ```console
-"Outcome": Failure
-"Reasoning":
-- There is no diamond necklace in the immediate vicinity, and the context does not support the presence of one
-- The focus is on scavenging for food and survival in a post-apocalyptic world, not on finding jewelry
-"Effect": None
-"Stat update": None
-```
-![img_2.png](documentation/img_2.png)
-```console
-"Outcome": Success
-"Reasoning":
-- Reason 1: As a Malkavian, Selene's connection to the world and its rhythms allows her to blend in and move unnoticed, even in the midst of the city's bustle.
-- Reason 2: Her supernatural speed and agility, courtesy of her Clan's heritage, enable her to navigate the streets with ease.
-"Effect": None (no confirmed change in environment)
-"Stat update": None (no stat changes or conditions applied)
-```
-![img_1.png](documentation/img_1.png)
-```console
-"Outcome": Success
-"Reasoning":
-- Your playful nature and feline-like behavior are well-suited to your Malkavian traits and the city's nocturnal atmosphere
-- Your actions are not threatening, and The Fox, being a Lasombra, is accustomed to the shadows and the subtle games of vampire society
-"Effect": The Fox's gaze follows your movement, her eyes narrowing slightly as she observes your playful circling, but she does not react with hostility
-"Stat update": None
+<Outcome>
+Effect:         You rush to Aki's defense, using your firebending to create a whip 
+                that lashes out at the Earth Kingdom benders, giving Aki the opportunity 
+                to get back on his feet.
+Stat Update:    Health (slightly improved, now lightly injured), 
+                Stamina (slightly weakened, now slightly exhausted)
+Judgement:      Partial Success
+Reasoning:      Quick thinking and effective use of firebending; 
+                Aki's injury limits the full success of the counterattack.
+</Outcome>
 ```
 
-![img.png](documentation/img.png)
-
-Does it provide real challenge? Yeah, I think - sort of. 
-I've died - though surviving is kinda easy - tweaking is ongoing in this regard.
-But this is complex: Overtune and you might get out of the shower, slip and die...
 
 - **Human-like memory:**
 When we continue the story we feed the LLM as much context as possible:
@@ -80,9 +68,8 @@ When we continue the story we feed the LLM as much context as possible:
   Long term memories are selectively chosen by relevance and weighed, assembled into chronological order and given to the LLM.
   
 
-  - Currently, PGM achieves (~6-10):1 compression ratios - depending on frequency of player action.
-  - It will fit around 50k tokens into the (dynamic) full context window.
-  - Once that context window is full:
+  - Currently, PGM achieves (~15-20):1 compression ratios - depending on frequency of player action.
+  - Once our context window is actually full:
     - rate long-term memories for salience (present characters, emotional state, location...) in the current situation.
     - and then fill the budget accordingly
 

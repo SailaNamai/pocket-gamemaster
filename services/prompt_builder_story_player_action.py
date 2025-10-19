@@ -4,9 +4,11 @@ import sqlite3
 from typing import Tuple
 from services.DB_token_cost import update_story_parameters_cost, update_memory_costs, update_system_prompt_costs
 from services.DB_access_pipeline import connect
+from services.prompt_builder_indent_helper import indent_one, indent_three
 from services.prompt_builder_memory_mid import build_mid_memory
 from services.prompt_builder_memory_long import build_long_memory
 from services.llm_config import GlobalVars
+from services.prompts_kickoffs import Kickoffs
 
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'story_player_action.log'
@@ -96,21 +98,28 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
     mid_memory = build_mid_memory()
     long_memory = build_long_memory()
 
+    # indent and number for structure
+    num_long_hc = "7. " + long_memory_hc
+    ind_long_hc = indent_one(num_long_hc)
+    ind_long = indent_three(long_memory)
+    ind_mid_hc = indent_one(mid_memory_hc)
+    ind_mid = indent_three(mid_memory)
+
     # Assemble system prompt in logical order
     system_segments = [
-        story_player_action.strip(),
-        chars_hc.strip(),
-        player_hc.strip(),
-        rules_hc.strip(),
-        world_hc.strip(),
-        style_hc.strip(),
+        story_player_action,
+        chars_hc,
+        player_hc,
+        rules_hc,
+        world_hc,
+        style_hc,
         # user writing style as system
-        style.strip(),
+        style,
         # memories
-        long_memory_hc.strip(),
-        long_memory.strip(),
-        mid_memory_hc.strip(),
-        mid_memory.strip(),
+        ind_long_hc,
+        ind_long,
+        ind_mid_hc,
+        ind_mid,
     ]
     system_prompt = "\n\n".join(filter(None, system_segments))
 
@@ -163,22 +172,33 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
             text = f"<PlayerAction>{text}</PlayerAction>"
         wrapped_texts.append(text)
 
+    indented_wrapped = [indent_one(text) for text in wrapped_texts]
+
     recent_block = (
-        "Here is what happened in the last paragraphs:\n\n"
-        + "\n\n".join(wrapped_texts)
+            "Here is what happened recently (short term memory):\n\n"
+            + "\n\n".join(indented_wrapped)
     )
 
     # Append outcome if available
     if latest_outcome:
         recent_block += "\n\n" + latest_outcome
 
+    # indent user values for structure
+    ind_chars = indent_one(chars)
+    ind_player = indent_one(player)
+    ind_rules = indent_one(rules)
+    ind_world = indent_one(world)
+
+    # kickoff
+    kickoff = Kickoffs.action_kickoff
+
     # Collect all user-defined segments
     user_segments = [
-        prepend_chars.strip(), chars.strip(),
-        prepend_player.strip(), player.strip(),
-        prepend_rules.strip(), rules.strip(),
-        prepend_world_setting.strip(), world.strip(),
-        recent_block
+        prepend_chars, ind_chars,
+        prepend_player, ind_player,
+        prepend_rules, ind_rules,
+        prepend_world_setting, ind_world,
+        recent_block, kickoff
     ]
 
     user_prompt = "\n\n".join(filter(None, user_segments))

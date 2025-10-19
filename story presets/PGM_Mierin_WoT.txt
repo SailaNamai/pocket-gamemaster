@@ -3,83 +3,142 @@
 
 <param-style>
 - Dark Fantasy
-- Lyrical Prose
 </param-style>
 
 <param-world>
-- The Wheel of Time: A fantasy series by Robert Jordan, set in an epic world where magic exists, during the events of the New Spring sequel.
-- The One Power emanates from the True Source, which is made up of two complementary parts: Saidin, the male half, and Saidar, the female half. - People who can wield the One Power are called Channelers. 
-- Saidin is described as a raging torrent of the Power which must be subdued and dominated by a strong-willed Channeler in order to be controlled. 
-- Saidar is said to be a "river of Power" which must be surrendered to or "embraced" in order to gain control.
-- The Dark One tainted Saidin. The taint placed on Saidin doomes all male channelers to slow insanity and eventually death. All the ancient male Aes Sedai eventually went mad and tore the world apart, causing the Breaking and ending the Age of Legends.
-- Due to the taint of Saidin there are no male channelers and the ones that emerge are hunted down by the Red Ajah. 
-- The Dark One: The primary antagonist, an all-powerful being of pure evil, sealed away by the Creator, seeking to break free and destroy the world.
-- The Dragon Reborn: A prophesied figure, reincarnated from a past life as Lews Therin, destined to face the Dark One in a final battle between good and evil.
-- The Aes Sedai: An organization of female magic users, divided into different Ajahs, who wield the One Power to maintain balance and order in the world. To become Aes Sedai one must complete The Path to Aes Sedai. Aes Sedai are commonly addressed as {First Name} Sedai.
-- The Warders: Aes Sedai companions, bonded to their Aes Sedai through a magical link, providing protection, support, and often serving as a source of strength.
-- Tar Valon: The capital city of the Aes Sedai, an island nation in the world of the Wheel of Time, where the Aes Sedai govern and the Amyrlin Seat holds authority.
-- The Last Battle/Tarmon Gai'don: The final confrontation between good and evil, prophesied to occur when the Dark One breaks free, marking the end of the world as known.
-- The Amyrlin Seat: The leader of the Aes Sedai, chosen by the Hall of the Tower, serving as the representative of the Aes Sedai and wielding significant authority.
-- Warders: The bonded male guardians of the (fully trained) Aes Sedai, chosen for their exceptional skill in combat and unwavering loyalty. Through the Warder bond, they share heightened senses, endurance, and a deep connection with their Aes Sedai, allowing them to protect and support her in battle and beyond. Warders can not channel the One Power.
+The Wheel of Time: 
+	- A fantasy series by Robert Jordan, set in an epic world where magic exists, during the events of the New Spring sequel.
+
+The One Power: 
+	- Emanates from the True Source, which is made up of two complementary parts: Saidin, the male half, and Saidar, the female half. 
+	- People who can wield the One Power are called Channelers. 
+	- Saidin is described as a raging torrent of the Power which must be subdued and dominated by a strong-willed Channeler.
+	- Saidar is said to be a "river of Power" which must be surrendered to or "embraced" in order to gain control.
+	- The Dark One tainted Saidin. 
+	- The taint placed on Saidin doomes all male channelers to slow insanity and eventually death. 
+	- All the ancient male Aes Sedai eventually went mad and tore the world apart, causing the Breaking and ending the Age of Legends.
+	- Due to the taint of Saidin there are no male channelers and the ones that emerge are hunted down by the Red Ajah. 
+
+The Dark One: 
+	- The primary antagonist, an all-powerful being of pure evil, sealed away by the Creator, seeking to break free and destroy the world.
+
+The Dragon Reborn: 
+	- A prophesied figure, reincarnated from a past life as Lews Therin, destined to face the Dark One in a final battle between good and evil.
+
+The Aes Sedai:
+	- An organization of female magic users, divided into different Ajahs, who wield the One Power.
+	- Maintain balance and order in the world. 
+	- To become Aes Sedai one must complete The Path to Aes Sedai. 
+	- Aes Sedai are commonly addressed by first name followed by the title Sedai.
+	- In the old tongue: Aes Sedai means protector of all.
+
+Warders: 
+	- The bonded male guardians of the (fully trained) Aes Sedai, chosen for their exceptional skill in combat and unwavering loyalty. 
+	- Through the Warder bond, they share heightened senses, endurance, and a deep connection with their Aes Sedai.
+	- Allowing them to protect and support her in battle and beyond. Warders can not channel the One Power.
+
+Tar Valon: 
+	- The capital city of the Aes Sedai.
+	- Island nation in the world of the Wheel of Time, where the Aes Sedai govern and the Amyrlin Seat holds authority.
+
+The Last Battle/Tarmon Gai'don: 
+	- The final confrontation between good and evil, prophesied to occur when the Dark One breaks free.
+	- Marks the end of the world as known.
+
+The Amyrlin Seat:
+	- Leader of the Aes Sedai, chosen by the Hall of the Tower, serving as the representative of the Aes Sedai.
+	- Wields significant authority but must maintain balance between the Ajah's.
 
 Nations:
-- Andor: Great nation, Queen Morgase, capital Caemlyn.
-- Cairhien: Nation of intrigue, capital Cairhien.
-- Tear: Nation ruled by High Lords, capital Tear (Stone of Tear).
-- Altara: Weakly unified nation, capital Ebou Dar.
-- Tar Valon: Independent city‑state built on an island in the mighty River Erinin, often called the heart of the world for its central position in trade and politics. At its center rises the White Tower, the seat of the Aes Sedai, a gleaming spire visible for miles in every direction and the true symbol of their power. The city itself is famed for its graceful bridges, bustling markets, and cosmopolitan population, drawing merchants and travelers from every nation. Across the river lies the city of Alindaer, a satellite settlement that thrives on the constant flow of goods and people moving to and from Tar Valon.
-- The Borderlands: Saldaea, Arafel, Kandor, Shienar (Malkier destroyed).
-- Shara: Isolated eastern land, mysterious and secretive.
+	- Tar Valon: 
+		- Independent city‑state built on an island in the mighty River Erinin.
+		- Often called the heart of the world for its central position in trade and politics. 
+		- At its center rises the White Tower, the seat of the Aes Sedai, a gleaming spire visible for miles in every direction.
+		- The city itself is famed for its graceful bridges, bustling markets, and cosmopolitan population.
+		- The city draws merchants and travelers from every nation.
+		- Across the river lies the city of Alindaer, a satellite settlement that thrives on the constant flow of goods and people.
+	- Andor: Great nation, Queen Morgase, capital Caemlyn.
+	- Cairhien: Nation of intrigue, capital Cairhien.
+	- Tear: Nation ruled by High Lords, capital Tear (Stone of Tear).
+	- Altara: Weakly unified nation, capital Ebou Dar.
+	- The Borderlands: Saldaea, Arafel, Kandor, Shienar (Malkier destroyed).
+	- Shara: Isolated eastern land, mysterious and secretive.
 
 The Path to Aes Sedai:
-- Discovering the Spark: A woman with the innate ability to channel the One Power must be brought to the White Tower. 
-- Novice: The journey begins as a Novice, where she learns the basics of channeling the five threads (air, earth, fire, water, and spirit) and performs chores. 
-- The Test of the Arches: After proving herself as a Novice, she takes a test with the Arches ter'angreal and, if she succeeds, becomes an Accepted. 
-- Accepted: As an Accepted, she receives more advanced training, learns at a more independent pace, and begins to lean toward a specific Ajah. 
-- The Final Test: When ready, the Accepted undertakes a final, brutal test in the White Tower's basement, weaving one hundred perfected weaves while seven sisters attempt to break her concentration. 
-- Becoming an Aes Sedai: If the test is completed successfully, she is raised to the rank of Aes Sedai, takes the Three Oaths on the Oath Rod, receives her Ajah's gemstone for her Great Serpent ring, and can then take her Ajah's shawl.
+	- Discovering the Spark: A woman with the innate ability to channel the One Power must be brought to the White Tower. 
+	- Novice: 
+		- The journey begins as a Novice, where she learns the basics of channeling the five threads (air, earth, fire, water, and spirit).
+		- Novices perform mundane chores to build character.
+	- The Test of the Arches: 
+		- After proving herself as a Novice, she takes a test with the Arches ter'angreal and, if she succeeds, becomes an Accepted. 
+	- Accepted: 
+		- Receive more advanced training, learn at a more independent pace, and begin to lean toward a specific Ajah. 
+	- The Final Test: 
+		- Accepted undertake a final, brutal test in the White Tower's basement.
+		- One hundred perfected weaves are required while seven sisters attempt to break her concentration. 
+	- Becoming an Aes Sedai: 
+		- Succesfully completed the the Final Test and raised to the rank of Aes Sedai.
+		- Takes the Three Oaths on the Oath Rod.
+		- Receives her chosen Ajah's gemstone for her Great Serpent ring, and can then take her chosen Ajah's shawl.
 
 The Ajah's:
--Red Ajah: Primarily dedicated to eliminating male channelers, fearing them as potential threats due to their ability to channel the One Power.
--Blue Ajah: Engaged in noble causes and activism, often seeking to influence world events in pursuit of justice and righteousness.
--Green Ajah: Known as the "Maidens of Battle," they prepare for Tarmon Gai'don and often have multiple Warders to protect them in battle.
--Yellow Ajah: Focused on the art of Healing, striving to mend both physical and spiritual ailments among the populace.
--White Ajah: Seekers of absolute truth who prioritize logic and reason, often to the neglect of emotion and personal connections.
--Brown Ajah: Devoted to the pursuit of knowledge and understanding, collecting and preserving information, histories, and artifacts.
--Gray Ajah: Specialize in diplomacy and negotiation, frequently acting as mediators in conflicts between various factions or nations.
--Black Ajah: A secretive faction, that is only rumored to exist, of Aes Sedai who have sworn allegiance to the Dark One, working to undermine the efforts of those aligned with the Light.
+	-Red Ajah: 
+		- Primarily dedicated to eliminating male channelers.
+		- Fearing them as potential threats due to the madness that comes from their ability to channel the One Power.
+	-Blue Ajah: 
+		- Engaged in noble causes and activism.
+		- Often seeking to influence world events in pursuit of justice and righteousness.
+		- Famed for their information gathering networks.
+	-Green Ajah: 
+		- Known as the 'Maidens of Battle'.
+		- Prepare for Tarmon Gai'don and often have multiple Warders to protect them in battle.
+	-Yellow Ajah: Focused on the art of Healing, striving to mend both physical and spiritual ailments among the populace.
+	-White Ajah: Seekers of absolute truth who prioritize logic and reason, often to the neglect of emotion and personal connections.
+	-Brown Ajah: Devoted to the pursuit of knowledge and understanding, collecting and preserving information, histories, and artifacts.
+	-Gray Ajah: Specialize in diplomacy and negotiation, frequently acting as mediators in conflicts between various factions or nations.
+	-Black Ajah: 
+		- A secretive faction, that is only rumored to exist.
+		- Aes Sedai who have sworn allegiance to the Dark One, working to undermine the efforts of those aligned with the Light.
 
 Clothing style:
-- Novices: Plain white dresses, no adornment; hair kept simple; clothing symbolizes humility and equality
-- Accepted: White dresses with seven colored bands at the cuffs, one for each Ajah; allowed slightly more freedom in hair and personal touches, but still modest and practical
-- Aes Sedai (general): Wear clothing in the color of their chosen Ajah; fine quality, often silk or rich wool; styles vary by personal taste and national origin, but always dignified
+	- Novices: Plain white dresses, no adornment; hair kept simple; clothing symbolizes humility and equality.
+	- Accepted: 
+		- White dresses with seven colored bands at the cuffs, one for each Ajah.
+		- Allowed slightly more freedom in hair and personal touches, but still modest and practical.
+	- Aes Sedai (general): 
+		- Wear clothing in the color of their chosen Ajah; fine quality, often silk or rich wool.
+		- Style varies by personal taste and national origin, but always dignified.
 </param-world>
 
 <param-rules>
-- The Channelers of the One Power have a lifespan considerably longer than normal human beings. A channeler's longevity roughly parallels their strength level. Usually the strongest Channelers have an expectancy of life far longer than the weakest.
+- The Channelers of the One Power have a lifespan considerably longer than normal human beings. 
+- A channeler's longevity roughly parallels their strength level. 
+- Usually the strongest Channelers have an expectancy of life far longer than the weakest.
 - When a Channeler draws too much of the One Power they "burn out" and die.
 - Male Channelers as a whole usually are much stronger in the amount of power that they can hold than female Channelers of comparable level (in much the same way men are generally stronger in their muscles than women) but the female can compensate this lack of brute force with far more dexterity. 
-- When using the One Power one weaves flows of different elements: Earth, Spirit, Water, Air, and Fire, also known as the Five Powers. Men are generally stronger with Fire and Earth, while women are generally stronger with Air and Water; significant strength in Spirit is distributed equally, and relatively rare in either. Spirit can only be channeled while asleep.
+- When using the One Power one weaves flows of different elements: Earth, Spirit, Water, Air, and Fire, also known as the Five Powers.
+- Men are generally stronger with Fire and Earth, while women are generally stronger with Air and Water
+- Significant strength in Spirit is distributed equally, and relatively rare in either. Spirit can only be channeled while asleep.
 </param-rules>
 
 <param-player>
 Mierin Eronaile:
-- 22 year old blonde woman
-- Born the daughter of a minor merchant in Tear, where she helped with the family business until her talent as a channeler was discovered. 
-- Wears a subtle braid on each side of her head and tucks the remaining hair into a ponytail. 
-- Was accepted into the White Tower of Tar'Valon where she is first to be trained as a Novice, hopeful to become an Accepted and eventually an Aes Sedai.
-- Headstrong and impatient, but dutiful and talented
+	- 22 year old blonde woman
+	- Born the daughter of a minor merchant in Tear, where she helped with the family business until her talent as a channeler was discovered. 
+	- Wears a subtle braid on each side of her head and tucks the remaining hair into a ponytail. 
+	- Was accepted into the White Tower of Tar'Valon where she is first to be trained as a Novice, hopeful to become an Accepted and eventually an Aes Sedai.
+	- Headstrong and impatient, but dutiful and talented
 </param-player>
 
 <param-characters>
 Accepted (still in training themselves):
-- Moiraine Damodred: (Reserved, observant, noble-born;  of the White Tower, diligent and precise in her studies, with a strong sense of duty.)
-- Siuan Sanche: (Sharp-witted, outspoken, pragmatic; Accepted of the White Tower, fishergirl background, ambitious and politically savvy even as a student.)
+	- Moiraine Damodred: (Reserved, observant, noble-born;  of the White Tower, diligent and precise in her studies, with a strong sense of duty.)
+	- Siuan Sanche: (Sharp-witted, outspoken, pragmatic; Accepted of the White Tower, fishergirl background, ambitious and politically savvy even as a student.)
 Mistress of Novices:
-- Sheriam Bayanar: (Firm but fair, approachable yet unyielding in discipline; responsible for guiding and correcting novices.)
+	- Sheriam Bayanar: (Firm but fair, approachable yet unyielding in discipline; responsible for guiding and correcting novices.)
 Amyrlin Seat:
-- Tamra Ospenya: Calm, wise, compassionate but politically astute
+	- Tamra Ospenya: Calm, wise, compassionate but politically astute
 Keeper of the Chronicles:
-- Gitara Moroso: (Intense, eccentric, prone to sudden trances; renowned for her powerful and unsettling Foretellings.)
+	- Gitara Moroso: (Intense, eccentric, prone to sudden trances; renowned for her powerful and unsettling Foretellings.)
 </param-characters>
 

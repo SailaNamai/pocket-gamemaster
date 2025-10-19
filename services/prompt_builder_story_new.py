@@ -4,6 +4,8 @@ from typing import Tuple
 from services.llm_config import GlobalVars
 from services.DB_token_cost import update_story_parameters_cost
 from services.DB_access_pipeline import connect
+from services.prompt_builder_indent_helper import indent_one, indent_three
+from services.prompts_kickoffs import Kickoffs
 from services.prompt_builder_memory_long import build_long_memory
 from services.prompt_builder_memory_mid import build_mid_memory
 
@@ -79,47 +81,62 @@ def get_story_new_prompts() -> Tuple[str, str]:
     mid_memory = build_mid_memory()
     long_memory = build_long_memory()
 
+    # indent and number to fit the structure
+    number_long = "7. " + long_memory_hc
+    ind_long_hc = indent_one(number_long)
+    ind_long = indent_three(long_memory)
+    ind_mid_hc = indent_one(mid_memory_hc)
+    ind_mid = indent_three(mid_memory)
+
     # Assemble system prompt in logical order
     system_segments = [
-        story_new.strip(),
-        chars_hc.strip(),
-        player_hc.strip(),
-        rules_hc.strip(),
-        world_hc.strip(),
-        style_hc.strip(),
+        story_new,
+        chars_hc,
+        player_hc,
+        rules_hc,
+        world_hc,
+        style_hc,
         # user writing as style as system
-        style.strip(),
-
-        long_memory_hc.strip(),
-        long_memory.strip(),
-        mid_memory_hc.strip(),
-        mid_memory.strip(),
+        style,
+        # memories
+        ind_long_hc,
+        ind_long,
+        ind_mid_hc,
+        ind_mid,
     ]
 
     system_prompt = "\n\n".join(filter(None, system_segments))
 
+    # indent user values
+    ind_chars = indent_one(chars)
+    ind_player = indent_one(player)
+    ind_rules = indent_one(rules)
+    ind_world = indent_one(world)
+
     # Assemble user prompt
     user_segments = [
-        prepend_chars.strip(),
-        chars.strip(),
-        prepend_player.strip(),
-        player.strip(),
-        prepend_rules.strip(),
-        rules.strip(),
-        prepend_world.strip(),
-        world.strip(),
-        #prepend_style.strip(),
-        #style.strip(),
+        prepend_chars,
+        ind_chars,
+        prepend_player,
+        ind_player,
+        prepend_rules,
+        ind_rules,
+        prepend_world,
+        ind_world,
+        # prepend_style,
+        # style,
     ]
 
     user_prompt = "\n\n".join(filter(None, user_segments))
+    kickoff = Kickoffs.new_kickoff
+    user_kickoff = user_prompt + kickoff
 
     # Log both prompts
     with open(log_path, 'w', encoding='utf-8') as log_f:
         log_f.write("=== SYSTEM PROMPT ===\n")
         log_f.write(system_prompt + "\n\n")
         log_f.write("=== USER PROMPT ===\n")
-        log_f.write(user_prompt + "\n")
+        log_f.write(user_kickoff + "\n")
 
     update_story_parameters_cost()
-    return system_prompt, user_prompt
+    return system_prompt, user_kickoff

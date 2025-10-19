@@ -7,11 +7,12 @@ def write_memory_prefix():
     """
     Writes prefixes for "on the fly" generated memories to DB:
     table: memory
-      mid_memory_hardcode     = "These are the condensed mid term story events:"
+      mid_memory_hardcode     = "These are the condensed mid-term story events:"
       long_memory_hardcode    = "These are the long term retained facts:"
     """
-    long_prefix = "These are the long term retained facts:"
-    mid_prefix  = "These are the condensed mid term story events:"
+    long_prefix = ("**Player character memory (oldest = long term memory, medium = medium term memory, newest = short term memory)**:\n\n"
+                   "\t- These are the long term retained facts (long term memory):")
+    mid_prefix  = "\t- These are the condensed mid-term story events (medium term memory):"
 
     with write_connection() as conn:
         cursor = conn.cursor()

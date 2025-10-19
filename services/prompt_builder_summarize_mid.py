@@ -4,6 +4,7 @@ import sqlite3
 from typing import Tuple
 from services.llm_config import GlobalVars
 from services.DB_access_pipeline import connect
+from services.prompts_kickoffs import Kickoffs
 
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'summarize_mid_memory.log'
@@ -42,31 +43,36 @@ def get_summarize_mid_memory_prompt() -> Tuple[str, str]:
 
     # Build user prompt, wrap in <Summary> tag
     user_prompt = f"<Summary>{_find_paragraph_to_summarize()}</Summary>"
+    kickoff = Kickoffs.long_memory_kickoff
+    user_kickoff = user_prompt + kickoff
 
     # Log both prompts
     with open(log_path, 'w', encoding='utf-8') as log_f:
         log_f.write("=== SYSTEM PROMPT ===\n")
         log_f.write(system_prompt + "\n\n")
         log_f.write("=== USER PROMPT ===\n")
-        log_f.write(user_prompt + "\n")
+        log_f.write(user_kickoff + "\n")
 
-    return system_prompt, user_prompt
+    return system_prompt, user_kickoff
 
 def _find_paragraph_to_summarize() -> str:
     """
-    Returns the summary_from_action text for the next paragraph
-    that falls outside the recent (tc_budget_recent_paragraphs) +
-    mid-memory (tc_budget_mid_memories) windows and has no summary.
-    If no such paragraph exists, returns an empty string.
+    1. If any paragraph within the recent or mid-memory windows already has a summary,
+       return "" immediately.
+    2. Otherwise, find the first actionable paragraph (summary_from_action present, summary missing)
+       that lies beyond both windows.
+    3. Collect up to 5 consecutive summary_from_action entries starting from that paragraph
+       (ordered oldest to newest) and return them joined with newlines.
     """
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
 
-        # Fetch all paragraphs in reverse chronological order
+        # Fetch all paragraphs in reverse chronological order (newest first)
         cur.execute("""
-            SELECT token_cost,
+            SELECT id,
+                   token_cost,
                    summary,
                    summary_from_action,
                    summary_token_cost
@@ -80,28 +86,62 @@ def _find_paragraph_to_summarize() -> str:
     threshold_recent = GlobalVars.tc_budget_recent_paragraphs
     threshold_mid = GlobalVars.tc_budget_mid_memories
 
+    # Pass 1: Walk through windows and check for any summaries
     for row in rows:
-        # Deduct from the recent-token window
         try:
             threshold_recent -= int(row['token_cost'])
         except (TypeError, ValueError):
             pass
-
         if threshold_recent > 0:
+            if row['summary']:
+                return ""  # summary already present in recent window
             continue
 
-        # Deduct from the mid-memory window
         try:
             threshold_mid -= int(row['summary_token_cost'])
         except (TypeError, ValueError):
             pass
+        if threshold_mid > 0:
+            if row['summary']:
+                return ""  # summary already present in mid-memory window
+            continue
 
+        # Once beyond both windows, stop checking for summaries
+        break
+
+    # Reset thresholds for actionable search
+    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
+    threshold_mid = GlobalVars.tc_budget_mid_memories
+
+    actionable_id = None
+    for row in rows:
+        try:
+            threshold_recent -= int(row['token_cost'])
+        except (TypeError, ValueError):
+            pass
+        if threshold_recent > 0:
+            continue
+
+        try:
+            threshold_mid -= int(row['summary_token_cost'])
+        except (TypeError, ValueError):
+            pass
         if threshold_mid > 0:
             continue
 
-        # Now beyond both windows: look for a summary-triggering paragraph
         if row['summary_from_action'] and not row['summary']:
-            return row['summary_from_action']
+            actionable_id = row['id']
 
-    # No actionable paragraph found
-    return ""
+    if not actionable_id:
+        return ""
+
+    # Collect up to 5 summary_from_action entries with higher id (newer rows)
+    candidates = [
+        r for r in rows
+        if r['id'] >= actionable_id and r['summary_from_action'] and not r['summary']
+    ]
+
+    # Sort ascending by id (oldest → newest) and take up to 5
+    candidates_sorted = sorted(candidates, key=lambda r: r['id'])[:5]
+
+    return "\n".join(r['summary_from_action'] for r in candidates_sorted)

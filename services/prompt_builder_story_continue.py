@@ -4,28 +4,15 @@ import sqlite3
 from typing import Tuple
 from services.llm_config import GlobalVars
 from services.DB_access_pipeline import connect
+from services.prompts_kickoffs import Kickoffs
 from services.prompt_builder_memory_mid import build_mid_memory
 from services.prompt_builder_memory_long import build_long_memory
+from services.prompt_builder_indent_helper import indent_one, indent_two, indent_three
 
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'story_continue.log'
 
 def get_story_continue_prompts() -> Tuple[str, str]:
-    """
-    Fetches and concatenates all the story_continue prompt components from the SQLite database.
-    Returns:
-      system_prompt: string combining:
-                     system prompt
-                     + all hardcode story parameters
-                     + writing_style (user)
-                     + long-term memories
-                     + mid-term memories
-      user_prompt:   string combining:
-                     prepend + dynamic characters, player, rules,
-                     world setting, and writing style if needed
-                     + relevant tagged paragraphs # tagging not yet implemented
-                     + story so far (last n paragraphs)
-    """
     log_path = LOG_DIR / LOG_FILE
 
     # Start DB data gathering
@@ -35,15 +22,11 @@ def get_story_continue_prompts() -> Tuple[str, str]:
         cur = conn.cursor()
 
         # Load the base system instruction
-        cur.execute("""
-            SELECT story_continue
-            FROM system_prompts
-            WHERE id = 1
-        """)
+        cur.execute("SELECT story_continue FROM system_prompts WHERE id = 1")
         temp = cur.fetchone()
         story_continue = temp[0] if temp and temp[0] is not None else ""
 
-        # Load story parameters: hardcodes, prepends, user values
+        # Load story parameters
         cur.execute("""
             SELECT
                 characters_hardcode,
@@ -73,93 +56,113 @@ def get_story_continue_prompts() -> Tuple[str, str]:
         ) = cur.fetchone()
 
         # Load memories
-        cur.execute("""
-            SELECT
-                mid_memory_hardcode,
-                long_memory_hardcode
-            FROM memory
-        """)
+        cur.execute("SELECT mid_memory_hardcode, long_memory_hardcode FROM memory")
         mid_memory_hc, long_memory_hc = cur.fetchone()
-
-        # Load tagged paragraphs
-        # tagging not yet implemented
     finally:
         conn.close()
 
-    # Use helper to dynamically build mid/long-memory based on current memory conveyor belt
+    # Build memories
     mid_memory = build_mid_memory()
     long_memory = build_long_memory()
 
-    # Assemble system prompt in logical order
+    number_long = "7. " + long_memory_hc
+    ind_long_hc = indent_one(number_long)
+    ind_long = indent_three(long_memory)
+    ind_mid_hc = indent_one(mid_memory_hc)
+    ind_mid = indent_three(mid_memory)
+
     system_segments = [
-        story_continue.strip(),
-        chars_hc.strip(),
-        player_hc.strip(),
-        rules_hc.strip(),
-        world_hc.strip(),
-        style_hc.strip(),
-        # user writing as style as system
-        style.strip(),
-        # memories
-        long_memory_hc.strip(),
-        long_memory.strip(),
-        mid_memory_hc.strip(),
-        mid_memory.strip(),
+        story_continue,
+        chars_hc,
+        player_hc,
+        rules_hc,
+        world_hc,
+        style_hc,
+        style,
+        ind_long_hc,
+        ind_long,
+        ind_mid_hc,
+        ind_mid,
     ]
     system_prompt = "\n\n".join(filter(None, system_segments))
 
-    """
-    Assemble user_segments including:
-      - all custom inputs (player, rules, world, etc.)
-      - a “recent_block” that fills up to GlobalVars.tc_budget_recent_paragraphs
-    """
-
-    # Load all story_paragraphs, ordered by paragraph_index
+    # Load story paragraphs
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         cur.execute("""
-                SELECT id, story_id, content, token_cost
-                  FROM story_paragraphs
-                 ORDER BY id
-            """)
+            SELECT id, story_id, content, token_cost, outcome
+              FROM story_paragraphs
+             ORDER BY id
+        """)
         rows = cur.fetchall()
     finally:
         conn.close()
 
-    # Pick as many of the newest paragraphs as will fit under the ceiling
+    # Select recent paragraphs
     max_recent = GlobalVars.tc_budget_recent_paragraphs
-    selected = []
-    acc = 0
-
-    # iterate from newest to oldest
+    selected, acc = [], 0
     for row in reversed(rows):
         cost = int(row["token_cost"])
         if acc + cost > max_recent:
             break
         selected.append(row)
         acc += cost
-
-    # restore original chronological order
     selected.reverse()
 
-    # Build the “recent_block” with UserAction wrapping
+    # Identify the last PlayerAction in the selected block
+    last_playeraction_index = None
+    for idx in range(len(selected) - 1, -1, -1):
+        if selected[idx]["story_id"] == "continue_with_UserAction":
+            last_playeraction_index = idx
+            break
+
+    # Build recent block, inserting outcome only if last PlayerAction
+    # is followed by exactly one non-PlayerAction paragraph
     wrapped_texts = []
-    for r in selected:
+    for idx, r in enumerate(selected):
         text = r["content"].strip()
         if r["story_id"] == "continue_with_UserAction":
             text = f"<PlayerAction>{text}</PlayerAction>"
+            wrapped_texts.append(text)
+
+            if idx == last_playeraction_index and r["outcome"]:
+                # Check if exactly one non-player paragraph follows
+                if (
+                        idx + 1 < len(selected) and
+                        selected[idx + 1]["story_id"] != "continue_with_UserAction" and
+                        idx + 2 == len(selected)  # ensure it's the last element
+                ):
+                    outcome_block = indent_one(r["outcome"].strip())
+                    wrapped_texts.append(outcome_block)
+            continue
+        """
+        if r["story_id"] == "continue_without_UserAction":
+            text = f"<Narrative>{text}</Narrative>"
+            wrapped_texts.append(text)
+        """
         wrapped_texts.append(text)
 
-    recent_block = (
-            "Here is what happened in the last paragraphs:\n\n"
-            + "\n\n".join(wrapped_texts)
-    )
-    # Collect all user-defined segments
-    user_segments = [prepend_chars.strip(), chars.strip(), prepend_player.strip(), player.strip(),
-                     prepend_rules.strip(), rules.strip(), prepend_world_setting.strip(), world.strip(), recent_block]
+    #indented_wrapped = [indent_one(text) for text in wrapped_texts]
+    recent_block = "Here is what happened recently (short term memory):\n\n" + "\n\n".join(wrapped_texts)
+    kickoff = Kickoffs.continue_kickoff
+    indent_recent = indent_one(recent_block)
 
+    # Collect user segments
+    ind_char = indent_one(chars)
+    ind_player = indent_one(player)
+    ind_rules = indent_one(rules)
+    ind_world = indent_one(world)
+
+    user_segments = [
+        prepend_chars, ind_char,
+        prepend_player, ind_player,
+        prepend_rules, ind_rules,
+        prepend_world_setting, ind_world,
+        indent_recent,
+        kickoff,
+    ]
     user_prompt = "\n\n".join(filter(None, user_segments))
 
     # Log both prompts

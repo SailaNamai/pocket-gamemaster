@@ -22,11 +22,6 @@ function clearAndRender(paragraphs, midMemory, longMemory) {
   if (midMemory  !== undefined) window.Snapshot.notifyBackendUpdate('.mid-synopsis-area');
   if (longMemory !== undefined) document.querySelector('.long-synopsis-area').innerHTML = longMemory;
   if (longMemory !== undefined) window.Snapshot.notifyBackendUpdate('.long-synopsis-area');
-  // Apply style
-  //styleStoryHistory()
-  // Call summarize
-  //callSummarize()
-  //loadInitialStateAndHistory()
 }
 
 window.clearAndRender = clearAndRender;

@@ -5,6 +5,7 @@ import sys
 
 
 from services.llm_config import Config
+from services.llm_config_helper import output_cleaner
 from services.DB_access_pipeline import write_connection
 from services.prompt_builder_eval_action import get_eval_player_action_prompts
 from services.DB_token_cost import count_tokens
@@ -18,7 +19,7 @@ def evaluate_player_action():
 
         # Run llama-cli
         cmd = [ LLAMA_CLI_PATH,
-                "-m", str(Config.MODEL_PATH),
+                "-m", str(Config.MODEL_PATH_GM),
                 "--ctx-size", str(Config.N_CTX),
                 "--n-predict", str(Config.MAX_GENERATION_TOKENS),
                 "--threads", str(Config.N_THREADS),
@@ -28,7 +29,7 @@ def evaluate_player_action():
                 "--repeat-penalty", str(Config.REPEAT_PENALTY_slave),
                 "--frequency-penalty", str(Config.FREQUENCY_PENALTY_slave),
                 "--presence-penalty", str(Config.PRESENCE_PENALTY_slave),
-                "--chat-template-file", str(Config.TEMPLATE_PATH),
+                "--chat-template-file", str(Config.TEMPLATE_PATH_GM),
                 "--system-prompt", system_prompt,
                 "--prompt", user_prompt
               ]
@@ -38,22 +39,19 @@ def evaluate_player_action():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             check=True
         )
         full_out = result.stdout or ""
         print("=== raw stdout ===\n", full_out)
-
-        # Clean up the generated text
-        # Isolate the assistant’s output
-        marker = f"{user_prompt}assistant"
-        full_text = full_out.split(marker, 1)[1] if marker in full_out else full_out
-        # Remove everything after the EOF sentinel
-        outcome = full_text.split("> EOF by user", 1)[0].strip()
+        generated = output_cleaner(full_out, user_prompt)
 
         # Count tokens for this new paragraph
-        token_cost = count_tokens(outcome)
+        token_cost = count_tokens(generated)
 
         # Persist into SQLite, updating the last row with outcome + token cost
+        print("write_connection type:", type(write_connection))
         with write_connection() as conn:
             cur = conn.cursor()
 
@@ -72,7 +70,7 @@ def evaluate_player_action():
                        outcome_token_cost = ?
                  WHERE id = ?
                 """,
-                (outcome, token_cost, last_id)
+                (generated, token_cost, last_id)
             )
 
         return
@@ -83,6 +81,7 @@ def evaluate_player_action():
         sys.exit(e.returncode)
 
     except Exception as e:
+        print("-- player_action_eval error --")
         print(f"[ERROR] {e}", file=sys.stderr)
         sys.exit(1)
 

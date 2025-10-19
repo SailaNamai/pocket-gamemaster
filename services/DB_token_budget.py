@@ -64,10 +64,6 @@ def update_budget():
         if new_long != db_long:
             conn.execute("UPDATE token_budget SET long_budget = ? WHERE id = 1", (new_long,))
 
-        # commit happens when write_connection closes (context manager)
-
-
-
 def _distribute_remaining(n_ctx, recent, mid, long):
     """
     Determine unused token budget and allocate remainder to long
@@ -105,7 +101,7 @@ def check_sanity(n_ctx, recent, mid, long_):
         return False
 
     # too large context
-    if n_ctx > 8000:
+    if n_ctx > 64000:
         return False
 
     # any of the history buckets must be positive

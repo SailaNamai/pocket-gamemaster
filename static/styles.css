@@ -1,25 +1,36 @@
-
+/* GPT 120b can't fix this - please help xD */
 :root {
-  --bg-color: #0f1724;
-  --surface: #0f1618;
-  --card-bg: rgba(255, 255, 255, 0.02);
-  --card-strong: rgba(255, 255, 255, 0.04);
-  --accent: #bfa77a;
-  --muted: #9aa3a6;
-  --text: #e8efe9;
-  --radius: 12px;
-  --glass-blur: 6px;
-  --max-width: 1100px;
-  --container-pad: 18px;
-  --ui-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  --mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --shadow: 0 6px 18px rgba(6, 10, 12, 0.55);
-  --elevation: 0 8px 26px rgba(6, 10, 12, 0.5);
+/* Background & surfaces */
+--bg-color: #0b0f14;
+--element-bg: #0f1724;
+--surface: #0e1518;
+--card-bg: rgba(255,255,255,0.02);
+--card-strong: rgba(255,255,255,0.045);
+
+/* Text and accents */
+--text: #e6efe6;
+--muted: #a1aaad;
+--accent: #c9a76a;
+
+/* Typography (readability) */
+--ui-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+--mono: "SFMono-Regular", ui-monospace, Menlo, "Courier New", monospace;
+--base-font-size: 16px;
+--line-height: 1.58;
+--max-width: 1050px;
+--container-pad: 12px;
+
+/* UI & geometry */
+--radius: 14px;
+--glass-blur: 8px;
+--shadow: 0 4px 20px rgba(3,7,10,0.6);
+--elevation: 0 12px 36px rgba(3,7,10,0.55);
 }
 
 /* reset */
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; padding: 0; }
+
 body {
   font-family: var(--ui-font);
   background: var(--bg-color);
@@ -32,11 +43,26 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 32px 14px;
+}
 
+/* Custom background class */
+.bg-image {
+  position: fixed;       /* sits behind everything */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/static/background.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  z-index: -1;           /* ensures it stays behind content */
+  pointer-events: none;  /* so it doesn’t block clicks */
 }
 
 .memory-tabs {
   border-radius: 4px;
+  margin-top: 8px;
   padding: 0px;
   min-height: 500px;
 }
@@ -137,8 +163,8 @@ body {
 .rpgui-container {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 22px;
+  padding: 8px;
+  margin-bottom: 12px;
   box-shadow: var(--shadow);
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -164,6 +190,7 @@ body {
   resize: none;      /* allow vertical resize only; use none to disable */
   padding: 0.5rem;       /* adjust to match input look */
   transition: box-shadow .12s ease, border-color .12s ease;
+  box-shadow: var(--shadow);
 }
 .rpgui-input:focus {
   box-shadow: 0 8px 24px rgba(80, 120, 140, 0.06);
@@ -203,14 +230,14 @@ body {
 .story-area {
   background: rgba(255,255,255,0.008);
   border-radius: calc(var(--radius) - 2px);
-  padding: 18px;
-  min-height: 500px;
-  max-height: 500px;
+  padding: 12px;
+  min-height: 620px;
+  max-height: 620px;
   overflow: auto;
   color: var(--text);
   backdrop-filter: blur(var(--glass-blur));
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.1rem;
+  line-height: 1.6rem;
   scroll-behavior: smooth;
 }
 
@@ -391,8 +418,8 @@ details summary:hover { color: var(--text); }
   display: flex;
   align-items: center;
   justify-content: flex-start; /* align items left */
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 0px;
+  margin-bottom: 0px;
 }
 
 /* keep title centered visually while using flex (if you want the title centered inside the full container) */
@@ -493,11 +520,37 @@ padding-bottom: 0.5rem;
   z-index: 10;
 }
 
-
-
 .info-icon-parameter:hover .tooltip-parameter,
 .info-icon-parameter:focus .tooltip-parameter {
   opacity: 1; /* Show the tooltip on hover or focus */
   transform: translateX(-50%) translateY(-5px); /* Slight upward movement */
 }
 
+.story-area,
+.param-tabs,
+.memory-tabs,
+.rpgui-input,
+.long-synopsis-area,
+.mid-synopsis-area,
+.rpgui-container {
+  background: var(--element-bg);
+}
+
+
+/* Render the >> prefix via CSS, not DOM mutation */
+#story-history p.user-action::before {
+  content: ">> ";
+  /* Style as needed: */
+  color: inherit;
+  opacity: 0.9;
+}
+
+/* Ensure tooltip on the <p> still shows even if inner spans are present */
+#story-history p.user-action {
+  position: relative;
+}
+
+/* If you still wrap content in spans later, avoid capturing hover */
+#story-history .user-action span {
+  pointer-events: none; /* allows hover on the parent <p> */
+}

@@ -54,8 +54,6 @@ CREATE TABLE IF NOT EXISTS mid_memory_bucket (
   id                              INTEGER PRIMARY KEY CHECK(id = 1), -- always 1, singleton row
   summary_style_hardcode          TEXT,      -- prepend like Summary Writing Style:
   summary_style                   TEXT,      -- Define tagging system
-  rules_hardcode                  TEXT,      -- prepend like Weighting Rules:(not so sure about this one)
-  rules                           TEXT,      -- rules for determining what are important memories
   tagging_hardcode                TEXT,      -- rules for tagging system
   token_cost                      TEXT       -- cost for all hardcodes + user inputs
 );

@@ -41,7 +41,7 @@ def build_long_memory() -> str:
 
     # reverse to oldest → newest and return joined summaries
     chronological = list(reversed(long_memory))
-    return "\n\n".join(s for s in chronological if isinstance(s, str))
+    return "\n\n".join(s.strip() for s in chronological if isinstance(s, str) and s.strip())
 
 def _fill_budget(rows, ordered_medium, ordered_high, ordered_very_high):
     """
@@ -117,7 +117,7 @@ def _order_by_importance(scored_summary: Dict[Any, Dict[str, Any]]) -> Tuple[Lis
     def norm_importance(value: Any) -> str:
         if value is None:
             return ""
-        return str(value).strip().lower().replace("_", " ")
+        return str(value).lower().replace("_", " ")
 
     def score_key(rec: Dict[str, Any]) -> float:
         try:
@@ -134,7 +134,7 @@ def _order_by_importance(scored_summary: Dict[Any, Dict[str, Any]]) -> Tuple[Lis
 
     for r in records:
         importance = norm_importance(r.get("importance"))
-        if importance in ("very high", "veryhigh", "vhigh", "very-high"):
+        if importance == "very high":
             very_high.append(r)
         elif importance == "high":
             high.append(r)

@@ -5,6 +5,7 @@ import sys
 import sqlite3
 
 from services.llm_config import Config, GlobalVars
+from services.llm_config_helper import output_cleaner
 from services.DB_access_pipeline import write_connection, connect
 from services.prompt_builder_summarize_mid import get_summarize_mid_memory_prompt
 from services.DB_token_cost import count_tokens
@@ -38,6 +39,8 @@ def summarize_mid_memory():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             check=True
         )
     except subprocess.CalledProcessError as e:
@@ -47,14 +50,10 @@ def summarize_mid_memory():
 
     full_out = result.stdout or ""
     print("=== raw stdout ===\n", full_out)
-
-    # isolate assistant response
-    marker = f"{user_prompt}assistant"
-    assistant_out = full_out.split(marker, 1)[1] if marker in full_out else full_out
-    response = assistant_out.split("> EOF by user", 1)[0].strip()
+    generated = output_cleaner(full_out, user_prompt)
 
     # count tokens for the summary text
-    token_cost = count_tokens(response)
+    token_cost = count_tokens(generated)
 
     # persist: update story_paragraphs.summary and summary_token_cost
     with write_connection() as conn:
@@ -71,23 +70,25 @@ def summarize_mid_memory():
                    SET summary = ?,
                        summary_token_cost   = ?
                  WHERE id = ?
-            """, (response,str(token_cost), paragraph_id)
+            """, (generated,str(token_cost), paragraph_id)
         )
     return
 
 def _find_paragraph_id() -> int:
     """
-    Returns the id for the next paragraph
-    that falls outside the recent (tc_budget_recent_paragraphs) +
-    mid-memory (tc_budget_mid_memories) windows and has no summary.
-    If no such paragraph exists, returns 0.
+    1. If any paragraph within the recent or mid-memory windows already has a summary,
+       return 0 immediately.
+    2. Otherwise, find the first actionable paragraph (summary_from_action present, summary missing)
+       that lies beyond both windows.
+    3. Collect up to 5 consecutive actionable paragraphs starting from that one
+       (ordered oldest to newest).
+    4. Return the highest id from that cluster (so the DB update attaches to the newest).
     """
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
 
-        # Fetch all paragraphs in reverse chronological order
         cur.execute("""
             SELECT id,
                    token_cost,
@@ -104,28 +105,64 @@ def _find_paragraph_id() -> int:
     threshold_recent = GlobalVars.tc_budget_recent_paragraphs
     threshold_mid = GlobalVars.tc_budget_mid_memories
 
+    # Pass 1: check for summaries inside windows
     for row in rows:
-        # Deduct from the recent-token window
         try:
             threshold_recent -= int(row['token_cost'])
         except (TypeError, ValueError):
             pass
-
         if threshold_recent > 0:
+            if row['summary']:
+                return 0
             continue
 
-        # Deduct from the mid-memory window
         try:
             threshold_mid -= int(row['summary_token_cost'])
         except (TypeError, ValueError):
             pass
+        if threshold_mid > 0:
+            if row['summary']:
+                return 0
+            continue
 
+        break  # beyond both windows
+
+    # Reset thresholds for actionable search
+    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
+    threshold_mid = GlobalVars.tc_budget_mid_memories
+
+    actionable_id = None
+    for row in rows:
+        try:
+            threshold_recent -= int(row['token_cost'])
+        except (TypeError, ValueError):
+            pass
+        if threshold_recent > 0:
+            continue
+
+        try:
+            threshold_mid -= int(row['summary_token_cost'])
+        except (TypeError, ValueError):
+            pass
         if threshold_mid > 0:
             continue
 
-        # Now beyond both windows: look for a summary-triggering paragraph
         if row['summary_from_action'] and not row['summary']:
-            return row['id']
+            actionable_id = row['id']
+            break
 
-    # No actionable paragraph found
-    return 0
+    if not actionable_id:
+        return 0
+
+    # Collect cluster: up to 5 actionable rows with id >= actionable_id
+    candidates = [
+        r for r in rows
+        if r['id'] >= actionable_id and r['summary_from_action'] and not r['summary']
+    ]
+    candidates_sorted = sorted(candidates, key=lambda r: r['id'])[:5]
+
+    if not candidates_sorted:
+        return 0
+
+    # Return the highest id in the cluster
+    return max(r['id'] for r in candidates_sorted)

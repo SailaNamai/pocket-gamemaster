@@ -5,6 +5,7 @@ import sys
 import re
 
 from services.llm_config import Config
+from services.llm_config_helper import output_cleaner
 from services.DB_access_pipeline import write_connection
 from services.prompt_builder_story_new import get_story_new_prompts
 from services.DB_scrub_story import clear_story_tables
@@ -19,40 +20,40 @@ def generate_story_new():
 
         # Build prompts
         system_prompt, user_prompt = get_story_new_prompts()
+        #user_prompt_with_placeholder = f"{user_prompt}"
 
         # Run llama-cli
-        cmd = [ LLAMA_CLI_PATH,
-                "-m", str(Config.MODEL_PATH),
-                "--ctx-size", str(Config.N_CTX),
-                "--threads", str(Config.N_THREADS),
-                "--gpu-layers", str(Config.N_GPU_LAYERS),
-                "--temp", str(Config.TEMPERATURE),
-                "--top-p", str(Config.TOP_P),
-                "--repeat-penalty", str(Config.REPEAT_PENALTY),
-                "--frequency-penalty", str(Config.FREQUENCY_PENALTY),
-                "--presence-penalty", str(Config.PRESENCE_PENALTY),
-                "--chat-template-file", str(Config.TEMPLATE_PATH),
-                "--system-prompt", system_prompt,
-                "--prompt", user_prompt
-              ]
+        cmd = [
+            LLAMA_CLI_PATH,
+            "-m", str(Config.MODEL_PATH),
+            "--ctx-size", str(Config.N_CTX),
+            "--threads", str(Config.N_THREADS),
+            "--gpu-layers", str(Config.N_GPU_LAYERS),
+            "--temp", str(Config.TEMPERATURE_NEW),
+            "--top-p", str(Config.TOP_P),
+            "--repeat-penalty", str(Config.REPEAT_PENALTY),
+            "--frequency-penalty", str(Config.FREQUENCY_PENALTY),
+            "--presence-penalty", str(Config.PRESENCE_PENALTY),
+            "--chat-template-file", str(Config.TEMPLATE_PATH),
+            "--system-prompt", system_prompt,
+            "--prompt", user_prompt,
+        ]
         result = subprocess.run(
             cmd,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True,
-            check=True
+            text=True, # raw_bytes = result.stdout ;;; full_out = raw_bytes.decode('utf-8', errors='replace')
+            encoding='utf-8',
+            errors='replace',
+            check=True,
         )
         full_out = result.stdout or ""
         print("=== raw stdout ===\n", full_out)
+        generated = output_cleaner(full_out, user_prompt)
 
-        # Clean up the generated text
-        marker = f"{user_prompt}assistant"
-        generated = (full_out.split(marker, 1)[1]
-                     if marker in full_out
-                     else full_out)
-        generated = generated.split("> EOF by user", 1)[0]
-        generated = re.sub(r'\n+', ' ', generated).strip()
+        # Collapse newlines and strip whitespace
+        generated = re.sub(r"\n+", " ", generated).strip()
 
         # Count tokens for this new paragraph
         token_cost = count_tokens(generated)
@@ -63,7 +64,7 @@ def generate_story_new():
             cur = conn.execute(
                 "SELECT COALESCE(MAX(paragraph_index), 0) + 1 "
                 "FROM story_paragraphs WHERE story_id = ?",
-                ("new",)
+                ("new",),
             )
             next_index = cur.fetchone()[0]
 
@@ -74,7 +75,7 @@ def generate_story_new():
                   (story_id, paragraph_index, content, token_cost)
                 VALUES (?, ?, ?, ?)
                 """,
-                ("new", next_index, generated, token_cost)
+                ("new", next_index, generated, token_cost),
             )
             paragraph_id = insert_cur.lastrowid
 
@@ -87,5 +88,6 @@ def generate_story_new():
         sys.exit(e.returncode)
 
     except Exception as e:
+        print("--- Story_new error ---")
         print(f"[ERROR] {e}", file=sys.stderr)
         sys.exit(1)

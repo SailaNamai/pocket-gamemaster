@@ -4,6 +4,7 @@ import subprocess
 import sys
 import sqlite3
 from services.llm_config import Config
+from services.llm_config_helper import output_cleaner
 from services.prompt_builder_summarize_from_player_action import (
     get_summarize_from_player_action_prompts
 )
@@ -39,6 +40,8 @@ def summarize_from_player_action():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             check=True
         )
     except subprocess.CalledProcessError as e:
@@ -48,12 +51,9 @@ def summarize_from_player_action():
 
     full_out = result.stdout or ""
     print("=== raw stdout ===\n", full_out)
+    generated = output_cleaner(full_out, user_prompt)
 
-    # isolate assistant response
-    marker = f"{user_prompt}assistant"
-    assistant_out = full_out.split(marker, 1)[1] if marker in full_out else full_out
-    body = assistant_out.split("> EOF by user", 1)[0].strip()
-    summary_text = body.strip()
+    summary_text = generated.strip()
 
     # count tokens for the summary text
     token_cost = count_tokens(summary_text)

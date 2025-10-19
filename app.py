@@ -13,7 +13,7 @@ from services.llm_config import GlobalVars
 from services.llm_config_helper import get_n_ctx, get_recent, get_mid, get_long
 from services.DB_token_budget import write_budget, check_sanity
 """
-# Prompt Assembly (Initial DB and UserInput)
+Prompt Assembly (Initial DB and UserInput)
 """
 from services.DB_access_pipeline import write_connection, connect
 from services.prompts_story_parameters import update_writing_style, update_world_setting, update_rules, update_player, update_characters
@@ -23,11 +23,12 @@ from services.prompts_memory_prefix import write_memory_prefix
 from services.prompts_tag import write_tagging_prompts
 from services.DB_token_budget import write_initial_budget, update_budget
 from services.prompts_eval_action import write_action_eval_bucket
-from services.DB_difficulty import write_difficulty, get_difficulty
+from services.DB_difficulty import write_difficulty, update_difficulty, get_difficulty
 """
 Buttons (Continue = continue_story & player_action, ...)
 """
 from services.DB_persist_user_edit import persist_user_edit
+from services.DB_get_helpers import get_last_outcome, clean_outcome
 from services.story_new import generate_story_new
 from services.story_continue import generate_story_continue
 from services.DB_player_action_to_paragraph import player_action_to_paragraph
@@ -37,7 +38,6 @@ from services.story_player_action_eval import evaluate_player_action
 """
 Memories&Summaries
 """
-from services.prompts_summarize_from_player_action import write_mid_memory_prompts
 from services.summarize_pipeline import summarize
 from services.DB_summarize_publish import publish_long_memory, publish_mid_memory
 
@@ -67,7 +67,7 @@ def index():
 
 """
 Endpoint for front-end listener (story parameters)
-On new entry we write to DB (if block), update token budget and return "ok".
+On new entry we write to DB (if: block), update token budget and return "ok".
 """
 @app.route('/update_story_parameter', methods=['POST'])
 def update_story_parameter():
@@ -93,8 +93,7 @@ def update_story_parameter():
     return jsonify({"status": "ok"})
 
 """
-Load story parameters (def initial state) from DB on first/new front end visit.
-Then load the story (def story_history).
+Load story parameters from DB on first/new front end visit.
 """
 @app.route('/api/initial_state')
 def initial_state():
@@ -129,7 +128,10 @@ def initial_state():
           "diff_setting": get_difficulty(),
       }
     })
-# Load story from DB on first visit
+
+"""
+Load story from DB on first visit
+"""
 @app.route('/api/story_history')
 def story_history():
     conn = connect(readonly=True)
@@ -138,7 +140,7 @@ def story_history():
         cur  = conn.cursor()
 
         cur.execute("""
-          SELECT id, content, story_id
+          SELECT id, content, story_id, outcome
             FROM story_paragraphs
         ORDER BY id
         """)
@@ -149,10 +151,32 @@ def story_history():
     paragraphs = [
       { "id":    row["id"],
         "content": row["content"],
-        "story_id": row["story_id"] }
+        "story_id": row["story_id"],
+        "outcome": clean_outcome(row["outcome"])
+        }
       for row in rows
     ]
     return jsonify({ "paragraphs": paragraphs })
+
+"""
+Evaluation pipeline:
+"""
+@app.route('/api/eval', methods=['POST'])
+def api_eval():
+    data = request.get_json() or {}
+    update_db = data.get('candidate')
+    if update_db: persist_user_edit(update_db)
+    player_action = data.get('action', '')
+    action = {}
+    if player_action: action = player_action_to_paragraph(player_action)  # returns {'id': row[0], 'content': row[1], 'story_id': row[2]}
+    evaluate_player_action()  # evaluation/outcome of that action, writes directly into db
+    outcome = get_last_outcome() # returns {"outcome": row[0]}
+    # clean the outcome string
+    outcome["outcome"] = clean_outcome(outcome.get("outcome"))
+    action_with_outcome = {**action, **outcome}
+    return jsonify({
+        'action': action_with_outcome
+    })
 
 """
 Generation pipelines:
@@ -182,23 +206,14 @@ def api_continue():
 
 # Player_action is, when the user has entered an action
 # api_new (no story) takes precedence and ignores the user action
+# we call the eval pipeline first, take a turn through the front-end and come here.
 @app.route('/api/player_action', methods=['POST'])
 def api_player_action():
-    data = request.get_json() or {}
-    update_db = data.get('candidate')
-    if update_db: persist_user_edit(update_db)
-    player_action = data.get('action', '')
-    action_row = player_action_to_paragraph(player_action) # Save the returned player_action to DB {id, content, story_id}
-    evaluate_player_action() # evaluation/outcome of that action, writes directly into db
-    llm_row = generate_player_action() # handle_player_action() must also return a dict {id, content, story_id}
+    new_paragraph = generate_player_action() # returns {"id": paragraph_id, "content": generated, "story_id": "continue_without_UserAction"}
     mid_html = publish_mid_memory()
     long_html = publish_long_memory()
-    # return both rows as an array
-    paragraphs = []
-    if action_row: paragraphs.append(action_row)
-    if llm_row:   paragraphs.append(llm_row)
     return jsonify({
-        'paragraphs': paragraphs,
+        'story': new_paragraph,
         'mid_memory': mid_html,
         'long_memory': long_html
     })
@@ -239,7 +254,7 @@ def api_update_difficulty():
 
     # pass difficulty and write to DB
     difficulty = data.get('difficulty')
-    write_difficulty(difficulty)
+    update_difficulty(difficulty)
 
     return jsonify(message='update_successful'), 200
 
@@ -251,8 +266,8 @@ if __name__ == '__main__':
     write_story_prompts()
     write_memory_prefix()
     write_tagging_prompts()
-    write_mid_memory_prompts()
     write_initial_budget()
+    write_difficulty()
     write_action_eval_bucket()
     # You can remove debug=True or set it to False. True will restart the app when the code changes (but not write to DB).
     # app.run(debug=True, port=5000, host='0.0.0.0', threaded=True) makes the app accessible from the local network: remove to limit to local machine only.
@@ -260,23 +275,3 @@ if __name__ == '__main__':
     # Change port if you need to.
     # Don't think we actually need threaded=True
     app.run(debug=True, port=5000, threaded=True)
-
-
-
-"""
-# I don't think I'll actually implement this.
-# Force is, when the player enters an action and clicks the 'Force' button (Intended as a kind of SuperUser prompt - WIP).
-@app.route('/api/force', methods=['POST'])
-def api_force():
-    new_paragraph = "Empty"
-    return jsonify({
-        'story': new_paragraph,
-        'mid_memory': publish_mid_memory(),
-        'long_memory': publish_long_memory()
-    })
-"""
-
-# Create once at app startup
-# Found a better solution, I think.
-#from concurrent.futures import ThreadPoolExecutor
-#executor = ThreadPoolExecutor(max_workers=2)

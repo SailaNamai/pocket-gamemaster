@@ -9,108 +9,109 @@
 
 <param-world>
 Set in the Shadowrun universe:
-- Cybernetics, magic and fantasy creatures co-exist.
-- Industrial espionage and corporate warfare runs rampant
-- Large numbers of humans have "Goblinized" into Orks and Trolls, while many human children are born as Elves, Dwarves, and even more exotic creatures.
+	- Cybernetics, magic and fantasy creatures co-exist.
+	- Industrial espionage and corporate warfare runs rampant
+	- Large numbers of humans have "Goblinized" into Orks and Trolls, while many human children are born as Elves, Dwarves, and even more exotic creatures.
 
 Sixth World:
-- The Sixth World is the world of today (2086 ). The Fifth World ended and the Sixth World began during the Awakening in 2011, when Magic returned to the world. A three-thousand-year lull in the flow of mystical energies subsided, and Magic returned to the world. Elves, Dwarfs, Orks, and Trolls assumed their true form, throwing off their human guise. The Awakening is the name given to the return of Magic in 2011, the Year of Chaos. The event signifies the beginning of the Sixth World of the Mayan Callender, a turning point to a new era of magic, drastically different from the Fifth World that preceded it. In a broader sense the Awakening describes the rise of the world mana level and the transformations of nature and humanity associated with it.
-- The decades that followed the Awakening were years of turmoil, panic, and chaos, as the Horsemen of the Apocalypse raced across the Earth. Primitives cultures that have never lost touch with their mystical past began to utilize magic against the great nations that had suppressed them for so long. The vast global telecommunications network collapsed under an assault by mysterious computer virus. Nuclear missiles were launched, but failed to detonate. Dragons soared in the skies. Epidemics and famine ravaged the face of the Earth. Clashes between newly Awakened races and the rest of humanity became common. All central authority crumbled and the world began to spiral down into an abyss. 
-
+	- The Sixth World is the world of today (2086 ). The Fifth World ended and the Sixth World began during the Awakening in 2011, when Magic returned to the world. A three-thousand-year lull in the flow of mystical energies subsided, and Magic returned to the world. Elves, Dwarfs, Orks, and Trolls assumed their true form, throwing off their human guise. The Awakening is the name given to the return of Magic in 2011, the Year of Chaos. The event signifies the beginning of the Sixth World of the Mayan Callender, a turning point to a new era of magic, drastically different from the Fifth World that preceded it. In a broader sense the Awakening describes the rise of the world mana level and the transformations of nature and humanity associated with it.
+	- The decades that followed the Awakening were years of turmoil, panic, and chaos, as the Horsemen of the Apocalypse raced across the Earth. Primitives cultures that have never lost touch with their mystical past began to utilize magic against the great nations that had suppressed them for so long. The vast global telecommunications network collapsed under an assault by mysterious computer virus. Nuclear missiles were launched, but failed to detonate. Dragons soared in the skies. Epidemics and famine ravaged the face of the Earth. Clashes between newly Awakened races and the rest of humanity became common. All central authority crumbled and the world began to spiral down into an abyss. 
+ 
 Races:
-- Characters can be humans, orks, trolls, elves, dwarves, as well as certain diverging subspecies (known as metavariants) such as gnomes, giants, dryads, etc. 
-- In the early days, when magic returned to the world, humans began to either change into, or give birth to, elf and dwarf infants, a phenomenon called Unexplained Genetic Expression (UGE). Later, some juvenile and adult humans "goblinized" into other races (mostly orks, but also some trolls). 
-- The term "metahuman" is used either to refer to humanity as a whole, including all races, or to refer specifically to non-human races, depending on context.
+	- Characters can be humans, orks, trolls, elves, dwarves, as well as certain diverging subspecies (known as metavariants) such as gnomes, giants, dryads, etc. 
+	- In the early days, when magic returned to the world, humans began to either change into, or give birth to, elf and dwarf infants, a phenomenon called Unexplained Genetic Expression (UGE). Later, some juvenile and adult humans "goblinized" into other races (mostly orks, but also some trolls). 
+	- The term "metahuman" is used either to refer to humanity as a whole, including all races, or to refer specifically to non-human races, depending on context.
 
 A shadowrun:
-- An attempt at data theft or physical break-in at a rival corporation or organization.
-- One of the main tools employed by both corporate rivals and underworld figures. 
-- When conflicts arise, corporations, governments, organized crime syndicates, and even wealthy individuals subcontract their dirty work to specialists, who then perform "shadowruns" or missions undertaken by deniable assets without identities or those that wish to remain unknown. The most skilled of these specialists, called shadowrunners, have earned a reputation for getting the job done.
+	- An attempt at data theft or physical break-in at a rival corporation or organization.
+	- One of the main tools employed by both corporate rivals and underworld figures. 
+	- When conflicts arise, corporations, governments, organized crime syndicates, and even wealthy individuals subcontract their dirty work to specialists, who then perform "shadowruns" or missions undertaken by deniable assets without identities or those that wish to remain unknown. The most skilled of these specialists, called shadowrunners, have earned a reputation for getting the job done.
 
 Corporations:
-- Dubbed "megacorporations", "megacorps", or simply "megas" or "corps" for short. Megacorporations in the 21st-century are global, with all but the smallest corps owning multiple subsidiaries and divisions around the world. They are the superpowers of the Shadowrun universe, with the largest corporations having far more political, economic, and military power than even the most powerful nation-states. 
+	- Dubbed "megacorporations", "megacorps", or simply "megas" or "corps" for short. Megacorporations in the 21st-century are global, with all but the smallest corps owning multiple subsidiaries and divisions around the world. They are the superpowers of the Shadowrun universe, with the largest corporations having far more political, economic, and military power than even the most powerful nation-states. 
 
 Archetypes:
-- Deckers can slide like a whisper through the databases of giant corporations, spiriting away the only thing of real value: information.
-- Street samurai are enforcers for hire whose combat skills and reflexes make them the ultimate urban predators.
-- Riggers can manipulate vehicles and drones for a variety of purposes.
-- Mages, those rare folk who possess the gift of wielding and shaping the magical energies that now surround the Earth, are sought after to spy on the competition, heal and buff their allies, sling spells against an enemy, commit magical sabotage, and any other purpose that their employers can dream up.
-- Shamans are specialized mages whose attunement to the natural magical forces allows them to support themselves and fellow shadowrunners with a variety of defensive spells, as well as summon spirits in combat.
-- Physical adepts, who use the awakened magical energies to refine their bodies to the point of absolute perfection and become the ultimate fighting machines.
+	- Deckers are digital infiltrators. Their specialized cyberdeck and hacking skills allow them to breach security systems, steal critical data, manipulate electronic networks, and provide crucial intelligence.
+	- Street samurai are enforcers for hire whose combat skills and reflexes make them the ultimate urban predators.
+	- Riggers can manipulate vehicles and drones for a variety of purposes.
+	- Mages, those rare folk who possess the gift of wielding and shaping the magical energies that now surround the Earth, are sought after to spy on the competition, heal and buff their allies, sling spells against an enemy, commit magical sabotage, and any other purpose that their employers can dream up.
+	- Shamans are specialized mages whose attunement to the natural magical forces allows them to support themselves and fellow shadowrunners with a variety of defensive spells, as well as summon spirits in combat.
+	- Physical adepts, who use the awakened magical energies to refine their bodies to the point of absolute perfection and become the ultimate fighting machines.
 
 The Matrix:
-- Worldwide computer network. 
-- It was created after the Crash of 2029 which destroyed the old internet, as a completely Virtual Reality based network
-- The entire Matrix is composed of various Host Systems. People interact with this Matrix by using cyberterminals or cyberdecks. 
-- Security measures include potentially brain-destroying artificial intelligences called "Intrusion Countermeasure Electronics" (ICE)
+	- Worldwide computer network. 
+	- It was created after the Crash of 2029 which destroyed the old internet, as a completely Virtual Reality based network
+	- The entire Matrix is composed of various Host Systems. People interact with this Matrix by using cyberterminals or cyberdecks. 
+	- Security measures include potentially brain-destroying artificial intelligences called "Intrusion Countermeasure Electronics" (ICE)
 </param-world>
 
 <param-rules>
 Combat Rules:
-- Physical capabilities might be enhanced through technological/biological interfaces
-- Cyberware/Bioware as modular performance amplifiers
-- Combat effectiveness measured by augmentation integration efficiency
+	- Physical capabilities might be enhanced through technological/biological interfaces
+	- Cyberware/Bioware as modular performance amplifiers
+	- Combat effectiveness measured by augmentation integration efficiency
 
 Magic System:
-- Magicians can cast spells, summon spirits, or perform astral projection
-- Drain: Magical energy cost that can harm the caster
-- Magical defenses exist against spellcasters
+	- Magicians can cast spells, summon spirits, or perform astral projection
+	- Drain: Magical energy cost that can harm the caster
+	- Magical defenses exist against spellcasters
 
 Hacking/Matrix Rules:
-- Deckers enter virtual reality to hack systems
-- Cybercombat and data stealing are key actions
-- Separate matrix combat and physical world mechanics
-- Cybersecurity and ICE (Intrusion Countermeasure Electronics) protect systems
+	- Deckers enter virtual reality to hack systems
+	- Cybercombat and data stealing are key actions
+	- Separate matrix combat and physical world mechanics
+	- Cybersecurity and ICE (Intrusion Countermeasure Electronics) protect systems
 </param-rules>
 
 <param-player>
 Arya 'Echo' Reed:
-- Occupation: Shadowrunner
-- Role: Decker
-- Data Sprite: Codey
-- Metatype: Human
-- Age: 26
-- Build: Thin physique, long black hair, wears jeans and leather, black boots, green eyes
-Primary Attributes: 
-- Logic (primary)
-- Intuition (secondary)
-- Willpower
-- Charisma
-Secondary attributes: 
-- Strength/Body low
-- Agility moderate
-
-Background:
-Grew up in London’s tech-dense boroughs, self-taught on dusty terminals and discarded rig parts; quick hands and a quicker mind turned late-night tinkering into a livelihood. After a string of small data heists and freelance gigs she caught the attention of a fixer who gave her steady work and access to better hardware. Skilled but inexperienced, she’s still waiting for the job that changes everything.
-
+	- Occupation: Shadowrunner
+	- Role: Decker
+	- Data Sprite: Codey
+	- Metatype: Human
+	- Age: 26
+	- Build: Thin physique, long black hair, wears jeans and leather, black boots, green eyes
+	Primary Attributes: 
+		- Logic (primary)
+		- Intuition (secondary)
+		- Willpower
+		- Charisma
+		Secondary attributes: 
+		- Strength/Body low
+		- Agility moderate
+	
+	Background:
+		- Grew up in London’s tech-dense boroughs, self-taught on dusty terminals and discarded rig parts; quick hands and a quicker mind turned late-night tinkering into a livelihood. After a string of small data heists and freelance gigs she caught the attention of a fixer who gave her steady work and access to better hardware. Skilled but inexperienced, she’s still waiting for the job that changes everything.
+	
 </param-player>
 
 <param-characters>
 Codey:
-- Type: Sprite (utility/versatile)
-- Specialties: Data Search, Snoop, Signal boost
-- Personality: Playful but efficient; sarcastic banter, loyal to handler
-- Typical uses: Scanning corporate comms, maintaining persistent backdoor, distracting security ICE, quick reconnaissance
-- Limits: Not a heavy combat sprite — optimized for stealth and data tasks; kept on short leash to avoid tracebacks.
-
+	- Type: Data-Sprite (utility/versatile)
+	- Exists in virtual reality and can project a holographic image.
+	- Specialties: Data Search, Snoop, Signal boost
+	- Personality: Playful but efficient; sarcastic banter, loyal to handler
+	- Typical uses: Scanning corporate comms, maintaining persistent backdoor, distracting security ICE, quick reconnaissance
+	- Form: varies; prefers: ferret.
+	- Limits: Not a heavy combat sprite; optimized for stealth and data tasks; can only communicate with beeps, chirps and changing color.
+	
 Fixer: Jonah Idris:
-- Mid-level London fixer specializing in tech jobs and discreet intel brokering
-- Age/Look: Early 40s, pragmatic style — patched leather jacket, augmented left hand, short salt-and-pepper hair, a scar across one eyebrow
-- Personality: Pragmatic, quietly ruthless when needed; values loyalty and clean jobs; low tolerance for drama
-- Prefers vetted, low-profile runs that minimize heat; pays fair but keeps tight control over client lists and cut percentages
+	- Mid-level London fixer specializing in tech jobs and discreet intel brokering
+	- Age/Look: Early 40s, pragmatic style — patched leather jacket, augmented left hand, short salt-and-pepper hair, a scar across one eyebrow
+	- Personality: Pragmatic, quietly ruthless when needed; values loyalty and clean jobs; low tolerance for drama
+	- Prefers vetted, low-profile runs that minimize heat; pays fair but keeps tight control over client lists and cut percentages
 
-The Team:
 Sam 'Grey' Harker:
-- Old veteran street samurai; calm, methodical, trusts experience over flash.
-- Full-body augment loadout, favors blades and precision suppressors; no-nonsense team leader.
+	- Old veteran street samurai; calm, methodical, trusts experience over flash.
+	- Full-body augment loadout, favors blades and precision suppressors; no-nonsense team leader.
 Brakka:
-- Female orc street samurai; hot-tempered and fierce in close quarters.
-- Heavy armor and cyberware for breaching; unpredictable but fiercely loyal.
+	- Female orc street samurai; hot-tempered and fierce in close quarters.
+	- Heavy armor and cyberware for breaching; unpredictable but fiercely loyal.
 Asha 'Grove' Malik:
-- Urban shaman who loves nature; maintains a rooftop garden and spirit shrines.
-- Specializes in healing and animal/plant spirit allies for recon and area control.
+	- Urban shaman who loves nature; maintains a rooftop garden and spirit shrines.
+	- Specializes in healing and animal/plant spirit allies for recon and area control.
 Rico 'Wires' Santos:
-- Rigger and drone specialist; quiet, obsessed with optimizing platform performance.
-- Runs a mixed fleet of recon and combat drones; handles vehicular support and electronic countermeasures.
+	- Rigger and drone specialist; quiet, obsessed with optimizing platform performance.
+	- Runs a mixed fleet of recon and combat drones; handles vehicular support and electronic countermeasures.
 </param-characters>
 

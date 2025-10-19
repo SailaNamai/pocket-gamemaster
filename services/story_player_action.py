@@ -2,14 +2,19 @@
 
 import subprocess
 import sys
-import re
+import difflib
 
 from services.llm_config import Config
+from services.llm_config_helper import output_cleaner, normalize_output, remove_truncated, close_quotes, clean_tags
 from services.DB_access_pipeline import write_connection
 from services.prompt_builder_story_player_action import get_story_player_action_prompts
 from services.DB_token_cost import count_tokens
 
+
 LLAMA_CLI_PATH = Config.LLAMA_CLI
+
+def is_close_match(a, b, threshold=0.8):
+    return difflib.SequenceMatcher(None, a, b).ratio() >= threshold
 
 def generate_player_action():
     try:
@@ -38,26 +43,19 @@ def generate_player_action():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             check=True
         )
         full_out = result.stdout or ""
         print("=== raw stdout ===\n", full_out)
 
-        # Clean up the generated text
-        # Isolate the assistant’s output
-        marker = f"{user_prompt}assistant"
-        full_text = full_out.split(marker, 1)[1] if marker in full_out else full_out
-        # Remove everything after the EOF sentinel
-        text = full_text.split("> EOF by user", 1)[0].strip()
-        # Split into paragraphs on blank lines
-        paras = [p.strip() for p in re.split(r'\n\s*\n', text) if p.strip()]
-        # Always take the first two paragraphs
-        selected = paras[:2]
-        # If a third paragraph exists and is exactly the GAME OVER marker, include it
-        if len(paras) > 2 and paras[2].strip() == "GAME OVER - Try again? :)":
-            selected.append(paras[2].strip())
-        # Collapse all line breaks into single spaces
-        generated = ' '.join(selected)
+        # Clean & normalize
+        generated = output_cleaner(full_out, user_prompt)
+        normalized = normalize_output(generated)
+        del_truncated = remove_truncated(normalized)
+        cleaned_tags = clean_tags(del_truncated)
+        selected_sentences = close_quotes(cleaned_tags)
 
         # Count tokens for this new paragraph
         token_cost = count_tokens(generated)
@@ -79,12 +77,12 @@ def generate_player_action():
                   (story_id, paragraph_index, content, token_cost)
                 VALUES (?, ?, ?, ?)
                 """,
-                ("continue_without_UserAction", next_index, generated, token_cost)
+                ("continue_without_UserAction", next_index, selected_sentences, token_cost)
             )
             paragraph_id = insert_cur.lastrowid
 
         # Return id & content
-        return {"id": paragraph_id, "content": generated, "story_id": "continue_without_UserAction"}
+        return {"id": paragraph_id, "content": selected_sentences, "story_id": "continue_without_UserAction"}
 
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] llama-cli exited with code {e.returncode}", file=sys.stderr)
@@ -92,5 +90,6 @@ def generate_player_action():
         sys.exit(e.returncode)
 
     except Exception as e:
+        print("-- player_action error --")
         print(f"[ERROR] {e}", file=sys.stderr)
         sys.exit(1)

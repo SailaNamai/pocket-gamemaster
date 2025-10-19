@@ -4,30 +4,70 @@ import sqlite3
 from services.llm_config import GlobalVars
 from services.summarize_from_player_action import summarize_from_player_action
 from services.summarize_mid_memory import summarize_mid_memory
-from services.summarize_tag_mid import summarize_create_tags
+from services.summarize_tag_long import summarize_create_tags
 from services.summarize_tag_recent import summarize_tag_recent
 from services.DB_access_pipeline import connect
 from services.DB_token_cost import check_long_memories_tc
 
 def summarize():
     debug = True
-    # See if we need to create a mid-term memory
+
+    # Mid-term memory: create summary from player action if needed
     handle = _check_mid_memories()
     if handle: summarize_from_player_action()
-    if handle and debug: print("finished summarize from_player_action")
-    if handle: summarize_create_tags()
-    if handle and debug: print("finished summarize create_tags")
-    # See if we need to create a long-term memory
+    if debug: print("finished summarize from_player_action" if handle else "skipped summarize from_player_action")
+
+    # Long-term memory: create summary if needed
     handle = _check_long_memories()
     if handle: summarize_mid_memory()
-    if handle and debug: print("finished summarize mid")
-    # See if our long term memory budget is full
-    # (if True we need to tag the most recent story, or we have nothing to compare against)
+    if debug: print("finished summarize mid" if handle else "skipped summarize mid")
+
+    # Missing tags: create tags for a long-term memory if needed
+    handle, tag_id = _check_missing_tags()
+    if handle: summarize_create_tags(tag_id)
+    if debug: print("finished summarize create_tags" if handle else "skipped summarize create_tags")
+
+    # Long-term memory budget check: tag recent story if budget full
     handle = check_long_memories_tc()
     if handle: summarize_tag_recent()
-    if handle and debug: print("finished summarize tag_recent")
+    if debug: print("finished summarize tag_recent" if handle else "skipped summarize tag_recent")
+
     if debug: print("Backend done.")
     return
+
+def _check_missing_tags():
+    """
+    Returns (True, highest_id) if there is at least one summary without tags.
+    Otherwise, returns (False, None).
+    """
+    conn = connect(readonly=True)
+    try:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT id,
+                   summary,
+                   tags
+              FROM story_paragraphs
+             ORDER BY id DESC
+        """)
+        rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    missing_ids = []
+    for row in rows:
+        summary = row["summary"]
+        tags = row["tags"]
+
+        if summary and (tags is None or str(tags).strip() == ""):
+            missing_ids.append(int(row["id"]))
+
+    if missing_ids:
+        return True, max(missing_ids)
+    return False, None
+
 
 def _check_mid_memories() -> bool:
     """
@@ -100,16 +140,15 @@ def _check_mid_memories() -> bool:
 
 def _check_long_memories() -> bool:
     """
-    Returns True if there is a new 'summary_from_action' (mid-term memory) paragraph
-    that falls outside the recent (token_cost) + mid-memory (summary_token_cost)
-    token window and has no summary. Otherwise, returns False.
+    Returns True if there is a cluster of new 'summary_from_action' (mid-term memory)
+    paragraphs that fall outside the recent (token_cost) + mid-memory (summary_token_cost)
+    token windows and have no summary. Otherwise, returns False.
     """
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
 
-        # Fetch all paragraphs in reverse chronological order
         cur.execute("""
             SELECT id,
                    token_cost,
@@ -126,39 +165,59 @@ def _check_long_memories() -> bool:
     threshold_recent = GlobalVars.tc_budget_recent_paragraphs
     threshold_mid = GlobalVars.tc_budget_mid_memories
 
+    # Pass 1: check for summaries inside windows
     for row in rows:
-        # Deduct from the recent-token window
         try:
-            recent_cost = int(row['token_cost'])
+            threshold_recent -= int(row['token_cost'])
         except (TypeError, ValueError):
-            recent_cost = 0
-
-        threshold_recent -= recent_cost
+            pass
         if threshold_recent > 0:
-            # Still inside the recent window
+            if row['summary']:
+                return False
             continue
 
-        # Deduct from the mid-memory window
         try:
-            mid_cost = int(row['summary_token_cost'])
+            threshold_mid -= int(row['summary_token_cost'])
         except (TypeError, ValueError):
-            mid_cost = 0
-
-        threshold_mid -= mid_cost
+            pass
         if threshold_mid > 0:
-            # Still inside the mid-memory window
+            if row['summary']:
+                return False
             continue
 
-        # We're now beyond both windows.
-        # Look for the next summary_from_action paragraph.
-        if not row['summary_from_action']:
-            # Not a summary-triggering paragraph: keep scanning
+        break  # beyond both windows
+
+    # Reset thresholds for actionable search
+    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
+    threshold_mid = GlobalVars.tc_budget_mid_memories
+
+    actionable_id = None
+    for row in rows:
+        try:
+            threshold_recent -= int(row['token_cost'])
+        except (TypeError, ValueError):
+            pass
+        if threshold_recent > 0:
             continue
 
-        # We found a summary_from_action that has no summary yet?
-        if not row['summary']:
-            return True   # Needs summarizing
+        try:
+            threshold_mid -= int(row['summary_token_cost'])
+        except (TypeError, ValueError):
+            pass
+        if threshold_mid > 0:
+            continue
 
-        return False      # Already summarized
+        if row['summary_from_action'] and not row['summary']:
+            actionable_id = row['id']
 
-    return False # No actionable paragraph found
+    if not actionable_id:
+        return False
+
+    # Collect cluster: up to 5 actionable rows with id >= actionable_id
+    candidates = [
+        r for r in rows
+        if r['id'] >= actionable_id and r['summary_from_action'] and not r['summary']
+    ]
+    candidates_sorted = sorted(candidates, key=lambda r: r['id'])[:5]
+
+    return bool(candidates_sorted)

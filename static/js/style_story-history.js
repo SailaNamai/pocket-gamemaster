@@ -12,18 +12,8 @@
 
       // 1) User action paragraphs
       if (sid === 'continue_with_UserAction') {
-        // avoid re-wrapping
-        if (!p.querySelector('.user-action')) {
-          const wrapper = document.createElement('span');
-          wrapper.className = 'user-action';
-          wrapper.appendChild(document.createTextNode('>> '));
-          // move all existing nodes into our wrapper
-          while (p.firstChild) {
-            wrapper.appendChild(p.firstChild);
-          }
-          p.appendChild(wrapper);
-        }
-
+          // Only annotate; no DOM surgery
+          p.classList.add('user-action');
       // 2) All other paragraphs: wrap "speech"
       } else {
         wrapSpeechInNode(p);

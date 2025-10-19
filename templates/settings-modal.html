@@ -12,7 +12,7 @@
           <path d="M12 17h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
         <span class="tooltip-settings" role="tooltip" id="tooltip-settings">
-          <small class="small-muted">For Q8_0 (downgrade model if on potato).<br><br>- Insane request? Your entered parameters (World,...) are longer than these (valid) settings would allow: Try lowering long budget<br>- Long budget is receiving the "unused" tokens from parameters (Writing Style, ...).<br>- We recalculate automatically if your parameter cost changes.<br>- (After saving) Press F5 and check here again to see changes.</small>
+          <small class="small-muted">Insane request?<br>Your entered parameters and the system prompt are bigger than your remaining budget. Set long budget to 1 and save, press F5 and return here to see your calculated budget.</small>
         </span>
       </div>
     </header>
@@ -21,11 +21,11 @@
       <label for="preset-select"><strong>Context length presets</strong></label>
       <select id="preset-select" name="preset" aria-describedby="preset-desc">
         <option value="custom" selected>Custom</option>
-        <option value="1">8k - 16gb VRAM - Full</option>
-        <option value="2">7k - High</option>
-        <option value="3">6k - 12gb VRAM -  Mid</option>
-        <option value="4">5k - Low</option>
-        <option value="5">4k - Try with 8gb VRAM - Lower</option>
+        <option value="1">16k</option>
+        <option value="2">12k</option>
+        <option value="3">10k</option>
+        <option value="4">8k</option>
+        <option value="5">6k</option>
       </select>
       <div id="preset-desc" class="hint">Choose a preset, edit as needed.</div>
 
@@ -45,7 +45,6 @@
 
       <div class="remaining-row" aria-live="polite" id="remaining-desc">
         <span id="remaining-value">0</span><strong> Remaining<br>(estimation without parameters entered)</strong>
-        <small class="small-muted">Parameters = Writing Style, World Setting, Rules, Player, Characters</small>
       </div>
 
       <div class="modal-actions">

@@ -5,6 +5,7 @@ from typing import Tuple, Optional
 
 from services.llm_config import GlobalVars
 from services.DB_access_pipeline import connect
+from services.prompts_kickoffs import Kickoffs
 
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'summarize_from_player_action.log'
@@ -29,7 +30,7 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
 
-        # 1) load base system prompt
+        # load base system prompt
         cur.execute("""
             SELECT story_summarize
               FROM system_prompts
@@ -38,19 +39,7 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
         row = cur.fetchone()
         story_summarize = row['story_summarize'] if row and row['story_summarize'] else ''
 
-        # 2) load styles & rules from singleton bucket
-        cur.execute("""
-            SELECT
-                rules_hardcode,
-                rules
-              FROM mid_memory_bucket
-             WHERE id = 1
-        """)
-        bucket = cur.fetchone()
-        rules_hardcode = bucket['rules_hardcode']         if bucket and bucket['rules_hardcode']         else ''
-        rules_user     = bucket['rules']                  if bucket and bucket['rules']                  else ''
-
-        # 3) load all paragraphs (oldest → newest)
+        # load all paragraphs (oldest → newest)
         cur.execute("""
             SELECT id,
                    story_id,
@@ -64,7 +53,7 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
     finally:
         conn.close()
 
-    # 4) find boundary where recent-token window ends
+    # find boundary where recent-token window ends
     threshold = GlobalVars.tc_budget_recent_paragraphs
     boundary_idx = len(rows) - 1
     for idx in range(len(rows) - 1, -1, -1):
@@ -78,7 +67,7 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
             boundary_idx = idx
             break
 
-    # 5) locate first unsummarized action up to boundary_idx
+    # locate first unsummarized action up to boundary_idx
     action_idx = None
     for i in range(boundary_idx, -1, -1):
         r = rows[i]
@@ -86,7 +75,7 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
             action_idx = i
             break
 
-    # 6) slice from that action up to (but not including) the next action
+    # slice from that action up to (but not including) the next action
     excerpt = []
     write_id = None
     if action_idx is not None:
@@ -125,14 +114,12 @@ def get_summarize_from_player_action_prompts() -> Tuple[str, str, Optional[int]]
 
     # 7) assemble system prompt
     system_parts = [
-        story_summarize,
-        rules_hardcode,
-        rules_user
+        story_summarize
     ]
     system_prompt = "\n\n".join(p for p in system_parts if p)
 
     # 8) assemble user prompt
-    kickoff = "Apply to this story excerpt:"
+    kickoff = Kickoffs.mid_memory_kickoff
     user_prompt = f"{kickoff}\n\n{recent_story}" if recent_story else kickoff
 
     # 9) log prompts for debugging (include write_id)

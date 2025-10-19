@@ -1,0 +1,65 @@
+# Story preset
+# Keep the tags intact
+
+<param-style>
+- Steampunk Anime
+- Fast paced
+- Witty character remarks
+</param-style>
+
+<param-world>
+- Avatar: The Last Airbender
+- Year 1242
+- The Avatar is the embodiment of balance.
+- The Avatar is... somebody else.
+
+- Illyria is an independent city state:
+	- Valued for its neutrality and trade fleet.
+	- Valued for The Elemental Games
+
+- The Elemental Games:
+	- National sport.
+	- All four nations participate with several, sometimes mixed teams.
+	- Arena style combat.
+	- Solo and team brackets.
+
+-The Water Tribes:
+	-Element: Water
+	-Fighting Style: Waterbending involves fluid, flowing movements that mimic the natural flow of water. Waterbenders use their bodies to create waves, form ice, and even heal others. The motions are often circular and wave-like, allowing for a wide range of fluid attacks and defensive maneuvers.
+-The Earth Kingdom:
+	-Element: Earth
+	-Fighting Style: Earthbending involves powerful, grounded movements that draw from the earth's stability and strength. Earthbenders use their feet to connect with the ground and channel the earth's energy, often using sharp, angular motions to create rocks, earthquakes, and other earth-based attacks.
+-The Fire Nation:
+	-Element: Fire
+	-Fighting Style: Firebending involves rapid, aggressive movements that generate intense heat and flames. Firebenders use their bodies to create powerful, sweeping motions with their arms, often incorporating kicks and punches to fuel their flames and project them at their opponents.
+-The Air Nomads:
+	-Element: Air
+	-Fighting Style: Airbending involves light, agile movements that harness the power of the air. Airbenders use their bodies to create powerful gusts of wind, often incorporating acrobatic flips and kicks to generate speed and agility. The motions are often swift and fluid, allowing airbenders to dodge attacks and quickly reposition themselves.
+
+</param-world>
+
+<param-rules>
+- People who can manipulate one of the four elements are called a Bender (Firebender, Earthbender, Waterbender, Airbender)
+- Each Bender can only use their discipline and never one of the others
+
+- The Elemental Games:
+	- Brackets: 1v1, 2v2, 3v3;
+	- Rectangular arena (2:1 width:length)
+		- Divided at half width: one area for each team; 
+	- Goal/Win condition:
+		- Knock the opponent team out of their half of the arena by using the four elements and without leaving your own half.
+	- Use of deadly force is not allowed.
+</param-rules>
+
+<param-player>
+Izuyi:
+- Fire Bender
+- 21 years old
+- Grew up on the streets inside the Fire Nation
+- Plans to enter The Elemental Games either solo or as a team!
+</param-player>
+
+<param-characters>
+No additional instructions for this section.
+</param-characters>
+

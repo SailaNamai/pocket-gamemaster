@@ -11,11 +11,12 @@
 </head>
 
 <body class="rpgui-content">
+    <div class="bg-image"></div>
     <div class="rpgui-container framed">
       <div class="header-row">
         <div class="header-title">
             <img src="{{ url_for('static', filename='favicon.png') }}" alt="" class="title-favicon">
-            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 5.05.20251009)</small>
+            <strong>P</strong>ocket <strong>G</strong>ame<strong>M</strong>aster <small class="small-muted">(beta 8.06.20251018)</small>
         </div>
             {% include 'settings-modal.html' %}
             {% include 'delete-modal.html' %}
@@ -70,10 +71,9 @@
     </div>
 
     <!-- Control Buttons -->
-    <div class="rpgui-container framed-golden" style="margin-bottom:5px;">
+    <div class="rpgui-container framed-golden" style="margin-bottom:12px;">
         <button class="rpgui-button golden" id="continue-btn">Continue</button>
         <button class="rpgui-button" id="redo-btn">Re-Do</button>
-        <!-- <button class="rpgui-button golden" id="force-btn">Force</button> -->
         <span id="status-indicator" style="margin-left:18px; font-size:1rem; color:#ffd96b;"></span>
     </div>
 
@@ -95,6 +95,7 @@
             <label for="param-tab-player">Player</label>
             <label for="param-tab-characters">Characters</label>
           </div>
+          <!-- parameter save/load button + info hover -->
           <div class="tab-controls" role="group" aria-label="Parameter actions">
             <button id="save-parameters" class="save-param-icon" aria-label="Save parameters" title="Save" type="button">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">
@@ -117,30 +118,30 @@
                   <path d="M12 17h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
                 <span class="tooltip-parameter" role="tooltip" id="tooltip-settings">
-                  <small class="small-muted">Load/save your settings. (Check .../pgm/story presets)<br><br>Parameter field syntax:<br>Use bullet point list:<br>Title:<br>- Definition1;<br>- Definition2; <br>- Definition3 with and clause;<br><br>Beginning and end of statements are clearly defined, logic operators like 'and' clearly connect two concepts.</small>
+                  <small class="small-muted">Load/save your settings. (Check .../pgm/story presets)<br><br>Parameter field syntax:<br>Use nested bullet point lists (check a preset for reference). You can indent and outdent marked text with tab and shift+tab.</small>
                 </span>
               </div>
           </div>
       </div>
       <div class="tab-panel" id="panel-style">
         <textarea id="param-style" class="rpgui-input" rows="6"
-          placeholder="(Will be added as system prompt.)&#10;Keep short and precise.&#10;Like this:&#10;- Noir&#10;- Dark Fantasy"></textarea>
+          placeholder="Keep short and precise.&#10;Like this:&#10;- Noir&#10;- Dark Fantasy"></textarea>
       </div>
       <div class="tab-panel" id="panel-world">
         <textarea id="param-world" class="rpgui-input" rows="6"
-          placeholder="Describe your world.&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
+          placeholder="Describe your world.&#10;&#10;Syntnax:&#10;Load a preset and see how its done there."></textarea>
       </div>
       <div class="tab-panel" id="panel-rules">
         <textarea id="param-rules" class="rpgui-input" rows="6"
-          placeholder="The LLM is hardcoded to ignore raw values (just doesn't work right).&#10;Instead it derives stats, skills etc from context and memory.&#10;So don't write any rules like:&#10;Success of lock-picking is determined by a 1d6 roll + skill.&#10;Instead give general instructions:&#10;Lockpicking is hard!"></textarea>
+          placeholder="Give general instructions like: Cooking is hard. Check out the Audrey preset rules section for ideas of what should be possible."></textarea>
       </div>
       <div class="tab-panel" id="panel-player">
         <textarea id="param-player" class="rpgui-input" rows="6"
-          placeholder="Describe your PC:&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
+          placeholder="Describe your PC:&#10;&#10;Syntnax:&#10;Load a preset and see how its done there."></textarea>
       </div>
       <div class="tab-panel" id="panel-characters">
         <textarea id="param-characters" class="rpgui-input" rows="6"
-          placeholder="List key NPCs.&#10;&#10;Syntnax:&#10;Load a preset (Selene) and see how its done there."></textarea>
+          placeholder="List key NPCs.&#10;&#10;Syntnax:&#10;Load a preset and see how its done there."></textarea>
       </div>
 
     </div>
@@ -240,8 +241,6 @@
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           triggerContinue();
-          // clear input if your workflow requires it
-          // input.value = '';
         }
       });
     });
@@ -287,6 +286,75 @@
       });
     });
     </script>
+
+    <!-- Prevents tab-out from parameter fields and renders the indent/outdent -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const textareas = document.querySelectorAll('textarea.rpgui-input');
+
+      textareas.forEach(textarea => {
+        textarea.addEventListener('keydown', e => {
+          if (e.key !== 'Tab') return;          // only care about Tab
+
+          e.preventDefault();                   // stop default focus change
+
+          const start = textarea.selectionStart;
+          const end   = textarea.selectionEnd;
+          const value = textarea.value;
+
+          // ---------- INDENT (Tab) ----------
+          if (!e.shiftKey) {
+            if (start !== end) {
+              // Indent every line in the selected block
+              const before   = value.slice(0, start);
+              const selected = value.slice(start, end);
+              const after    = value.slice(end);
+
+              const indented = selected.replace(/^/gm, '\t');
+              textarea.value = before + indented + after;
+
+              textarea.selectionStart = start;
+              textarea.selectionEnd   = start + indented.length;
+            } else {
+              // Insert a single tab at the caret
+              textarea.value = value.slice(0, start) + '\t' + value.slice(end);
+              textarea.selectionStart = textarea.selectionEnd = start + 1;
+            }
+
+            // Notify backend logic
+            textarea.dispatchEvent(new Event("input", { bubbles: true }));
+            return;
+          }
+
+          // ---------- OUTDENT (Shift+Tab) ----------
+          // Determine the range of lines to process
+          const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+          const lineEnd   = value.indexOf('\n', end);
+          const rangeStart = lineStart;
+          const rangeEnd   = lineEnd === -1 ? value.length : lineEnd;
+
+          const before   = value.slice(0, rangeStart);
+          const block    = value.slice(rangeStart, rangeEnd);
+          const after    = value.slice(rangeEnd);
+
+          // Remove one leading tab OR up to 4 spaces from each line
+          const outdented = block.replace(/^(?:\t| {1,4})/gm, '');
+
+          textarea.value = before + outdented + after;
+
+          // Adjust selection so it stays around the same text
+          const newStart = start - Math.min(start - rangeStart, 1);
+          const newEnd   = end - Math.min(end - rangeStart, 1);
+          textarea.selectionStart = Math.max(rangeStart, newStart);
+          textarea.selectionEnd   = Math.max(rangeStart, newEnd);
+
+          // Notify backend logic
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+      });
+    });
+    </script>
+
 
     <!-- Kill any snapshots the browser might have made on its own -->
     <!-- Without this the page might load faster, but it'll also load stale data and potentially taint the DB -->

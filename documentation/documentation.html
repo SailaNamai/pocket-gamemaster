@@ -100,18 +100,23 @@ Explanation of Q and why shortening context might be worth?
 Read the excerpt below.
 
 Download the model variant and place in .../pgm
-Q8_0 (full context requires 16gb VRAM, 12gb might get away with 6k context)
-<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q8_0.gguf</code></div>
-Choose Q6 for mid-range PC (12gb should comfortably do full context):
-<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q6_K.gguf</code></div>
-Q4 if you are on a potato based system (8gb VRAM should handle full context):
-<div class="code-indent"><code>https://huggingface.co/bartowski/NeuralDaredevil-8B-abliterated-GGUF/blob/main/NeuralDaredevil-8B-abliterated-Q4_K_M.gguf</code></div>
+Q8_0 (requires 24gb+ VRAM)
+<div class="code-indent"><code>https://huggingface.co/RicardoEstep/Krix-12B-Model_Stock-GGUF</code></div>
+Q6 (16gb should do 10k-ish context):
+<div class="code-indent"><code>https://huggingface.co/DreadPoor/Krix-12B-Model_Stock-Q6_K-GGUF</code></div>
+Q4
+<div class="code-indent"><code>https://https://huggingface.co/RicardoEstep/Krix-12B-Model_Stock-GGUF</code></div>
 The quick and dirty "fix" is to rename whichever model you chose to
-<div class="code-indent"><code>NeuralDaredevil-8B-abliterated-Q8_0.gguf</code></div>
+<div class="code-indent"><code>krix-12b-model_stock-q6_k.gguf</code></div>
 Otherwise change
 <div class="code-indent"><code>.../pgm/services/llm_config.py
-MODEL_PATH
+MODEL_PATH and MODEL_PATH_GM
 (comment and uncomment lines accordingly)</code></div>
+Can I go 7b, 8b, 9b, 11b?
+- 7, 8: No, the models are too stupid to understand the instructions.
+- 9b: No-ish: I didn't test any gemma2 variants. Those have decent scores but all have 8k context...
+- 11b: No-ish, but maybe. The 12b models struggle with the instructions already.
+
 Proceed to the next step. Don't skip anything until you've verified success.
 
 Excerpt on Q:
@@ -249,15 +254,7 @@ Replace the app.run(...) line with
 <div class="code-indent"><code>app.run(debug=True, port=5000, threaded=True, host='0.0.0.0')</code></div>
 Then start the app and access (for example) 192.168.1.123:5000 with a browser from another device.
 
-Click the cog (settings) and adjust:
-<div class="code-indent"><code>Token budget</code></div>
-Default is 6192. Max for model = 8192 (clamped to 8000) =should be fine with 16gb VRAM. You'll have to adjust this to your hardware (discuss with GPT) or just trial and error. If you go over what your hardware can handle the model will eventually crap out with OOM.
-Then adjust the values for
-<div class="code-indent"><code>"Raw" story
-Mid-term memories
-Long-term memories</code></div>
-Keep raw above 1000 (about 5 paragraphs), mid/long above 1500.
-Any "unspent" tokens are added to long.
+Click the cog (settings) and adjust.
 
 Click save and you can start :)
       </div>
