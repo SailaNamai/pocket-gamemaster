@@ -53,7 +53,7 @@ Audrey has:
 </param-rules>
 
 <param-player>
-Saila Namai:
+YourNameGoesHere:
 	- 36 years old.
 	- Sold his CyberSecurity (C-Sec) firm for billions and is currently looking for something to do...
 	- Attractive phsyique.
@@ -64,7 +64,7 @@ Saila Namai:
 <param-characters>
 Audrey Grace:
 	- Baseline
-		- 16 year old.
+		- 18 year old.
 		- Black, shoulder long hair.
 		- Brown eyes.
 		- 52 kg, and trained physique.
