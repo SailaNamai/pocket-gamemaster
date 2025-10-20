@@ -33,8 +33,8 @@ class Kickoffs:
                            "\nPlease emit according to 1.1 **Structure**"
                           "\nApply to the summary above.")
 
-    # For tagging mid-term memory
-    tag_long_kickoff = "Apply to this story excerpt:"
+    # For tagging long-term memory
+    tag_long_kickoff = "Emit a single valid json object and nothing else.\nApply to this summary:"
 
     # For tagging recent story
     tag_recent_kickoff = "Apply to this story excerpt:"

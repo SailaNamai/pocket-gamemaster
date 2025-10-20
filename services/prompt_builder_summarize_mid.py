@@ -1,7 +1,6 @@
-# services.prompt_builder_summarize_mid.py
-
+# services/prompt_builder_summarize_mid.py
 import sqlite3
-from typing import Tuple
+from typing import Tuple, List
 from services.llm_config import GlobalVars
 from services.DB_access_pipeline import connect
 from services.prompts_kickoffs import Kickoffs
@@ -9,139 +8,96 @@ from services.prompts_kickoffs import Kickoffs
 LOG_DIR  = GlobalVars.log_folder
 LOG_FILE = 'summarize_mid_memory.log'
 
-def get_summarize_mid_memory_prompt() -> Tuple[str, str]:
+
+def get_summarize_mid_memory_prompt(summarize_ids: List[int]) -> Tuple[str, str]:
     """
-    Fetches and concatenates all the summarize mid-term memory prompt components from the SQLite database.
-    Returns:
-      system_prompt: string of:
-                     system prompt
-      user_prompt:   string of:
-                     paragraph to summarize wrapped in <Summary>...</Summary>
+    Build the prompts for a mid‑memory summarization request.
+
+    Parameters
+    ----------
+    summarize_ids: List[int]
+        IDs (≤5) returned by `_check_long_memories`.  If the list is empty,
+        the function returns empty strings – the caller can simply skip the
+        LLM call.
+
+    Returns
+    -------
+    system_prompt: str
+        The base system instruction (from `system_prompts.mid_memory_summarize`).
+
+    user_prompt: str
+        `<Summary>…</Summary>` containing the concatenated
+        `summary_from_action` texts for the supplied IDs, followed by the
+        long‑memory kickoff text.
     """
     log_path = LOG_DIR / LOG_FILE
 
-    # Start DB data gathering
+    # ------------------------------------------------------------------
+    # 1️⃣  Load the static system prompt from the DB
+    # ------------------------------------------------------------------
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-
-        # Load the base system instruction
-        cur.execute("""
-                SELECT mid_memory_summarize
-                FROM system_prompts
-                WHERE id = 1
-            """)
-        temp = cur.fetchone()
-        mid_memory_summarize = temp[0] if temp and temp[0] is not None else ""
+        cur.execute(
+            """
+            SELECT mid_memory_summarize
+            FROM system_prompts
+            WHERE id = 1
+            """
+        )
+        row = cur.fetchone()
+        system_prompt = row["mid_memory_summarize"] if row and row["mid_memory_summarize"] else ""
     finally:
         conn.close()
 
-    # Build system prompt
-    # might attach more later, depends on how it goes
-    system_prompt = mid_memory_summarize
+    # ------------------------------------------------------------------
+    # 2️⃣  If there are no IDs to summarise, return empty prompts
+    # ------------------------------------------------------------------
+    if not summarize_ids:
+        return system_prompt, ""
 
-    # Build user prompt, wrap in <Summary> tag
-    user_prompt = f"<Summary>{_find_paragraph_to_summarize()}</Summary>"
-    kickoff = Kickoffs.long_memory_kickoff
-    user_kickoff = user_prompt + kickoff
+    # ------------------------------------------------------------------
+    # 3️⃣  Pull the `summary_from_action` text for each requested ID
+    # ------------------------------------------------------------------
+    # Preserve the order the caller gave us (normally oldest → newest)
+    placeholders = ",".join("?" for _ in summarize_ids)
 
-    # Log both prompts
-    with open(log_path, 'w', encoding='utf-8') as log_f:
+    conn = connect(readonly=True)
+    try:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(
+            f"""
+            SELECT id, summary_from_action
+              FROM story_paragraphs
+             WHERE id IN ({placeholders})
+            """,
+            summarize_ids,
+        )
+        rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    # Map id → text for quick lookup (some IDs might be missing – guard against it)
+    id_to_text = {int(r["id"]): r["summary_from_action"] or "" for r in rows}
+
+    # Build the concatenated paragraph block in the order supplied
+    paragraph_block = "\n".join(id_to_text.get(pid, "") for pid in summarize_ids)
+
+    # ------------------------------------------------------------------
+    # 4️⃣  Assemble the user prompt
+    # ------------------------------------------------------------------
+    user_prompt = f"<Summary>{paragraph_block}</Summary>"
+    user_kickoff = user_prompt + Kickoffs.long_memory_kickoff
+
+    # ------------------------------------------------------------------
+    # 5️⃣  Log the prompts (useful for debugging)
+    # ------------------------------------------------------------------
+    with open(log_path, "w", encoding="utf-8") as log_f:
         log_f.write("=== SYSTEM PROMPT ===\n")
         log_f.write(system_prompt + "\n\n")
         log_f.write("=== USER PROMPT ===\n")
         log_f.write(user_kickoff + "\n")
 
     return system_prompt, user_kickoff
-
-def _find_paragraph_to_summarize() -> str:
-    """
-    1. If any paragraph within the recent or mid-memory windows already has a summary,
-       return "" immediately.
-    2. Otherwise, find the first actionable paragraph (summary_from_action present, summary missing)
-       that lies beyond both windows.
-    3. Collect up to 5 consecutive summary_from_action entries starting from that paragraph
-       (ordered oldest to newest) and return them joined with newlines.
-    """
-    conn = connect(readonly=True)
-    try:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-
-        # Fetch all paragraphs in reverse chronological order (newest first)
-        cur.execute("""
-            SELECT id,
-                   token_cost,
-                   summary,
-                   summary_from_action,
-                   summary_token_cost
-              FROM story_paragraphs
-             ORDER BY id DESC
-        """)
-        rows = cur.fetchall()
-    finally:
-        conn.close()
-
-    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
-    threshold_mid = GlobalVars.tc_budget_mid_memories
-
-    # Pass 1: Walk through windows and check for any summaries
-    for row in rows:
-        try:
-            threshold_recent -= int(row['token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_recent > 0:
-            if row['summary']:
-                return ""  # summary already present in recent window
-            continue
-
-        try:
-            threshold_mid -= int(row['summary_token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_mid > 0:
-            if row['summary']:
-                return ""  # summary already present in mid-memory window
-            continue
-
-        # Once beyond both windows, stop checking for summaries
-        break
-
-    # Reset thresholds for actionable search
-    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
-    threshold_mid = GlobalVars.tc_budget_mid_memories
-
-    actionable_id = None
-    for row in rows:
-        try:
-            threshold_recent -= int(row['token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_recent > 0:
-            continue
-
-        try:
-            threshold_mid -= int(row['summary_token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_mid > 0:
-            continue
-
-        if row['summary_from_action'] and not row['summary']:
-            actionable_id = row['id']
-
-    if not actionable_id:
-        return ""
-
-    # Collect up to 5 summary_from_action entries with higher id (newer rows)
-    candidates = [
-        r for r in rows
-        if r['id'] >= actionable_id and r['summary_from_action'] and not r['summary']
-    ]
-
-    # Sort ascending by id (oldest → newest) and take up to 5
-    candidates_sorted = sorted(candidates, key=lambda r: r['id'])[:5]
-
-    return "\n".join(r['summary_from_action'] for r in candidates_sorted)

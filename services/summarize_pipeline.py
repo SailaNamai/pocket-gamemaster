@@ -18,9 +18,9 @@ def summarize():
     if debug: print("finished summarize from_player_action" if handle else "skipped summarize from_player_action")
 
     # Long-term memory: create summary if needed
-    handle = _check_long_memories()
-    if handle: summarize_mid_memory()
-    if debug: print("finished summarize mid" if handle else "skipped summarize mid")
+    summarize_ids = _check_long_memories()
+    if summarize_ids: summarize_mid_memory(summarize_ids)
+    if debug: print("finished summarize mid" if summarize_ids else "skipped summarize mid")
 
     # Missing tags: create tags for a long-term memory if needed
     handle, tag_id = _check_missing_tags()
@@ -34,6 +34,86 @@ def summarize():
 
     if debug: print("Backend done.")
     return
+
+def _check_long_memories() -> list[int]:
+    """
+    Walks through the recent‑token and mid‑memory windows.
+    - Returns early (empty list) if any paragraph inside the windows already has a `summary`.
+    - After the windows, scans backward until reaching id == 1 or a paragraph with a `summary`.
+    - From that point, gathers the 5 lowest‑id paragraphs that have
+      `summary_from_action` but no `summary`.
+    - Returns the list of those IDs (empty if no candidates).
+    """
+    conn = connect(readonly=True)
+    try:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT id,
+                   token_cost,
+                   summary,
+                   summary_from_action,
+                   summary_token_cost
+              FROM story_paragraphs
+             ORDER BY id DESC
+            """
+        )
+        rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    # recent‑token window
+    recent_budget = GlobalVars.tc_budget_recent_paragraphs
+    for row in rows:
+        try:
+            recent_budget -= int(row["token_cost"])
+        except (TypeError, ValueError):
+            pass
+
+        if recent_budget > 0:
+            # Inside recent window – abort early if a summary already exists
+            if row["summary"]:
+                return []          # early exit: nothing to do
+            continue
+
+        # Exited recent window – stop this pass
+        break
+
+    # Pass through the mid‑memory window
+    mid_budget = GlobalVars.tc_budget_mid_memories
+    for row in rows:
+        try:
+            mid_budget -= int(row["summary_token_cost"])
+        except (TypeError, ValueError):
+            pass
+
+        if mid_budget > 0:
+            # Inside mid‑memory window – abort early if a summary already exists
+            if row["summary"]:
+                return []          # early exit: nothing to do
+            continue
+
+        # Exited mid‑memory window – stop this pass
+        break
+
+    # Scan backwards to the stopping point (id == 1 or a summary)
+    candidate_ids: list[int] = []
+    for row in rows:
+        # Stop condition
+        if row["id"] == 1 or row["summary"]:
+            # We've reached the boundary – stop scanning further
+            break
+
+        # Collect rows that have a summary_from_action but lack a summary
+        if row["summary_from_action"] and not row["summary"]:
+            candidate_ids.append(int(row["id"]))
+
+    # Return the five lowest IDs (i.e., earliest paragraphs)
+    candidate_ids.sort()  # lowest IDs first
+    if len(candidate_ids) < 5:
+        return []  # not a full cluster → skip
+    return candidate_ids[:5]  # exactly five IDs
 
 def _check_missing_tags():
     """
@@ -138,86 +218,4 @@ def _check_mid_memories() -> bool:
 
     return False
 
-def _check_long_memories() -> bool:
-    """
-    Returns True if there is a cluster of new 'summary_from_action' (mid-term memory)
-    paragraphs that fall outside the recent (token_cost) + mid-memory (summary_token_cost)
-    token windows and have no summary. Otherwise, returns False.
-    """
-    conn = connect(readonly=True)
-    try:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
 
-        cur.execute("""
-            SELECT id,
-                   token_cost,
-                   summary,
-                   summary_from_action,
-                   summary_token_cost
-              FROM story_paragraphs
-             ORDER BY id DESC
-        """)
-        rows = cur.fetchall()
-    finally:
-        conn.close()
-
-    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
-    threshold_mid = GlobalVars.tc_budget_mid_memories
-
-    # Pass 1: check for summaries inside windows
-    for row in rows:
-        try:
-            threshold_recent -= int(row['token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_recent > 0:
-            if row['summary']:
-                return False
-            continue
-
-        try:
-            threshold_mid -= int(row['summary_token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_mid > 0:
-            if row['summary']:
-                return False
-            continue
-
-        break  # beyond both windows
-
-    # Reset thresholds for actionable search
-    threshold_recent = GlobalVars.tc_budget_recent_paragraphs
-    threshold_mid = GlobalVars.tc_budget_mid_memories
-
-    actionable_id = None
-    for row in rows:
-        try:
-            threshold_recent -= int(row['token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_recent > 0:
-            continue
-
-        try:
-            threshold_mid -= int(row['summary_token_cost'])
-        except (TypeError, ValueError):
-            pass
-        if threshold_mid > 0:
-            continue
-
-        if row['summary_from_action'] and not row['summary']:
-            actionable_id = row['id']
-
-    if not actionable_id:
-        return False
-
-    # Collect cluster: up to 5 actionable rows with id >= actionable_id
-    candidates = [
-        r for r in rows
-        if r['id'] >= actionable_id and r['summary_from_action'] and not r['summary']
-    ]
-    candidates_sorted = sorted(candidates, key=lambda r: r['id'])[:5]
-
-    return bool(candidates_sorted)

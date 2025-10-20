@@ -33,7 +33,7 @@ def update_writing_style(user_value: str):
         
         Good examples and why they succeed:
             - You are being watched. 
-                - Succeeds because the player character is referenced as "you".
+                - Succeeds because the player character is referenced as you.
             - "Hey, {PlayerCharacter}," he greets with a smile. "How was your day?"
                 - Succeeds because the player character is referenced by name and/or your in direct speech. 
             - "I'd like a salad," you tell the Waiter.
