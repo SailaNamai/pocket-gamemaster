@@ -36,14 +36,6 @@ def summarize():
     return
 
 def _check_long_memories() -> list[int]:
-    """
-    Walks through the recent‑token and mid‑memory windows.
-    - Returns early (empty list) if any paragraph inside the windows already has a `summary`.
-    - After the windows, scans backward until reaching id == 1 or a paragraph with a `summary`.
-    - From that point, gathers the 5 lowest‑id paragraphs that have
-      `summary_from_action` but no `summary`.
-    - Returns the list of those IDs (empty if no candidates).
-    """
     conn = connect(readonly=True)
     try:
         conn.row_factory = sqlite3.Row
@@ -63,57 +55,48 @@ def _check_long_memories() -> list[int]:
     finally:
         conn.close()
 
-    # recent‑token window
     recent_budget = GlobalVars.tc_budget_recent_paragraphs
+    mid_budget = GlobalVars.tc_budget_mid_memories
+    cutoff_id = None
+    candidate_ids: list[int] = []
+
     for row in rows:
-        try:
-            recent_budget -= int(row["token_cost"])
-        except (TypeError, ValueError):
-            pass
+        if row["summary"]:
+            if recent_budget > 0 or mid_budget > 0:
+                return []  # early exit: summary in recent or mid window
+            else:
+                break  # stop collecting once we hit a summary
 
         if recent_budget > 0:
-            # Inside recent window – abort early if a summary already exists
-            if row["summary"]:
-                return []          # early exit: nothing to do
+            try:
+                recent_budget -= int(row["token_cost"])
+            except (TypeError, ValueError):
+                pass
             continue
-
-        # Exited recent window – stop this pass
-        break
-
-    # Pass through the mid‑memory window
-    mid_budget = GlobalVars.tc_budget_mid_memories
-    for row in rows:
-        try:
-            mid_budget -= int(row["summary_token_cost"])
-        except (TypeError, ValueError):
-            pass
 
         if mid_budget > 0:
-            # Inside mid‑memory window – abort early if a summary already exists
-            if row["summary"]:
-                return []          # early exit: nothing to do
+            try:
+                mid_budget -= int(row["summary_token_cost"])
+            except (TypeError, ValueError):
+                pass
             continue
 
-        # Exited mid‑memory window – stop this pass
-        break
+        # First row after both windows — set cutoff
+        if cutoff_id is None:
+            cutoff_id = row["id"]
 
-    # Scan backwards to the stopping point (id == 1 or a summary)
-    candidate_ids: list[int] = []
-    for row in rows:
-        # Stop condition
-        if row["id"] == 1 or row["summary"]:
-            # We've reached the boundary – stop scanning further
-            break
-
-        # Collect rows that have a summary_from_action but lack a summary
-        if row["summary_from_action"] and not row["summary"]:
+        # Only collect if below cutoff
+        if row["id"] < cutoff_id and row["summary_from_action"] and not row["summary"]:
             candidate_ids.append(int(row["id"]))
 
-    # Return the five lowest IDs (i.e., earliest paragraphs)
-    candidate_ids.sort()  # lowest IDs first
+        if row["id"] == 1:
+            break
+
     if len(candidate_ids) < 5:
-        return []  # not a full cluster → skip
-    return candidate_ids[:5]  # exactly five IDs
+        return []
+    return sorted(candidate_ids)[:5]
+
+
 
 def _check_missing_tags():
     """

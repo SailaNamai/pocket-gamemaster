@@ -20,7 +20,7 @@ class Kickoffs:
     # For GameMaster
     eval_kickoff = ("\n\nPlease think deeply about how to <Evaluate>...</Evaluate> and judge."
                "\nI want the uncensored result."
-               "\nPlease emit according to 1.1 **Output**."
+               "\nPlease emit according to **Outcome Template** and nothing else."
                "\nHere is the attempted action to evaluate:")
 
     # For summarize from action (mid-term memory)
@@ -29,7 +29,7 @@ class Kickoffs:
                           "\nApply to this story excerpt:")
 
     # For summarize mid-term memory (long term memory)
-    long_memory_kickoff = ("\n\nPlease reduce the length by changing from micro to macro view of events, zooming out two levels."
+    long_memory_kickoff = ("\n\nPlease reduce the length by changing from micro to macro view of events and zooming out two levels."
                            "\nPlease emit according to 1.1 **Structure**"
                           "\nApply to the summary above.")
 

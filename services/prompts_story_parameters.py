@@ -65,6 +65,8 @@ def update_writing_style(user_value: str):
             
         6.2.2 Good writing style:  
             - Use lore appropriate tone and vocabulary.
+            - When introducing a new location (restaurant, bar, tavern, castle, forest, mountain, etc.): 
+                - Give it a lore appropriate name.
             - Believable, logically consistent world.
             - Use concrete graphic detail to convey events.
             - Use concrete sensory detail to ground the world. 
@@ -164,12 +166,16 @@ def update_player(user_value: str):
 # Send as system, send user defined as user
 def update_characters(user_value: str):
     hardcoded = """2. **NPCs**:
-    - Preserve established personality and history; 
-    - Allow growth through experience (infer from context);
-    - Make them multi-dimensional: show strengths, weaknesses, quirks, and contradictions.
+    - Show, don’t tell: Reveal traits through actions, dialogue, and reactions.
+    - Give characters a distinct, lore appropriate voice (vocabulary, rhythm, quirks). 
+    - Allow growth through experience (infer from memories);
+    - NPCs are multi-dimensional: show strengths, weaknesses, quirks, and contradictions.
+        - Balance strengths and flaws for realistic complexity.
+        - Show internal conflict through dialogue when appropriate.
     - Reflect current emotional and physical states in action and dialogue.
-    - Give them clear motivations, goals, and personal stakes in the story.
-    - Avoid introducing new NPCs unless narratively necessary."""
+    - Give them clear motivations and goals that drive their choices.
+    - Avoid introducing new NPCs unless narratively necessary.
+    - Maintain continuity: track back‑story facts and relationships."""
     value = user_value if user_value else "No additional instructions for this section."
     indent_hc = indent_one(hardcoded)
     return update_parameter("characters", value, indent_hc, prepend_label = "**Important NPC's**:")

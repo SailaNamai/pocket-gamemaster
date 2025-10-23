@@ -105,14 +105,8 @@ async function callSummarize(signalOrFlag) {
 }
 
 // -----------------------------------------------------------------------------
-// Payload Builder
+// Payload Builder (attach any candidateSnapshot present)
 // -----------------------------------------------------------------------------
-
-/**
- * Build a payload that always contains an `action` field (empty string if no
- * user input) and optionally a `candidate` snapshot.
- * This guarantees that player_action requests are persisted.
- */
 function buildBasePayload() {
   const payload = {};
 
@@ -120,12 +114,15 @@ function buildBasePayload() {
   const playerInput = actionEl?.value?.trim() ?? '';
   payload.action = playerInput;
 
-  // Candidate snapshot
+  // Candidate snapshot (attach if present and parseable)
   try {
     const raw = localStorage.getItem('candidateSnapshot');
-    const candidate = raw ? JSON.parse(raw) : null;
-    if (candidate && Array.isArray(candidate.diffs) && candidate.diffs.length) {
-      payload.candidate = candidate;
+    if (raw) {
+      const candidate = JSON.parse(raw);
+      // Attach any non-null candidate (accept diffs array OR other snapshot shapes)
+      if (candidate && (Array.isArray(candidate.diffs) ? candidate.diffs.length > 0 : Object.keys(candidate).length > 0)) {
+        payload.candidate = candidate;
+      }
     }
   } catch (e) {
     console.warn('Failed to parse candidateSnapshot', e);

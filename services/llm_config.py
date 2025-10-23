@@ -26,7 +26,7 @@ class Config:
     Do not change EVAL/TAGS without confirming in the DB that the outcome is structurally correct over several tests.
     If there is more than one outcome block, trailing text or so: the writers get confused and drinks itself to death.
     """
-    TEMPERATURE_EVAL: float = 0.06 # used in evaluation of player action outcome (keep low or the GM turns insane).
+    TEMPERATURE_EVAL: float = 0.16 # used in evaluation of player action outcome (keep low or the GM turns insane).
     TEMPERATURE_TAGS: float = 0.06  # used in creating tags (keep low or the json will be faulty/fail).
 
     # Nucleus sampling cutoff (top_p): trims the “candidate list” to only the most probable words.

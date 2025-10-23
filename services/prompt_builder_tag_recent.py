@@ -69,7 +69,7 @@ def get_prompts_tag_recent() -> Tuple[str, str]:
 
     user_prompt = "\n\n".join(user_parts)
     kickoff = Kickoffs.tag_recent_kickoff
-    user_kickoff = user_prompt + "\n\n" + kickoff
+    user_kickoff = kickoff + "\n\n" + user_prompt
 
     # --- system context: accumulate earlier rows until budget/new ---
     context_parts = []

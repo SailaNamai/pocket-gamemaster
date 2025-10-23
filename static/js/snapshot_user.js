@@ -1,5 +1,4 @@
 // static/js/snapshot_user.js
-// Usage: include <script src="{{ url_for('static', filename='js/snapshot_user.js') }}"></script>
 // Behavior: On user edit: captures a snapshot of '#story-history', '.mid-synopsis-area', '.long-synopsis-area'
 // Save to localStorage as userSnapshots
 // You can force a snapshot programmatically with window.UserSnapshot.pushNow({ reason: 'your-reason' })

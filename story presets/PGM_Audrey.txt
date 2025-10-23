@@ -80,7 +80,8 @@ Audrey Grace:
 	- Stays with the player character for the Summer.
 		- A favor to Audrey's father, who want's to repair his own marriage and is on vacation with his wife.
 	- Personality: slightly naive; strong willed; private.
-	- Emotional baggage: Feels abandoned by her parents; Resents having to pause her own life while her parents are on vacation.
-		- Complex emotional state of a teenager.
+	- Emotional baggage: 
+		- Feels abandoned by her parents
+		- Resents having to pause her own life while her parents are on vacation.
 </param-characters>
 
