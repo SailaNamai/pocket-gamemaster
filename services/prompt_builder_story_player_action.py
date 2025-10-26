@@ -4,7 +4,7 @@ import sqlite3
 from typing import Tuple
 from services.DB_token_cost import update_story_parameters_cost, update_memory_costs, update_system_prompt_costs
 from services.DB_access_pipeline import connect
-from services.prompt_builder_indent_helper import indent_one, indent_three
+from services.prompt_builder_indent_helper import indent_one, indent_three, indent_two
 from services.prompt_builder_memory_mid import build_mid_memory
 from services.prompt_builder_memory_long import build_long_memory
 from services.llm_config import GlobalVars
@@ -147,7 +147,7 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
     if rows:
         last_row = rows[-1]
         if last_row["outcome"]:
-            latest_outcome = last_row["outcome"].strip()
+            latest_outcome = last_row["outcome"]
             outcome_cost = int(last_row["outcome_token_cost"] or 0)
             max_recent -= outcome_cost
             if max_recent < 0:
@@ -181,7 +181,8 @@ def get_story_player_action_prompts() -> Tuple[str, str]:
 
     # Append outcome if available
     if latest_outcome:
-        recent_block += "\n\n" + latest_outcome
+        ind_outcome = indent_two(latest_outcome)
+        recent_block += "\n\n" + ind_outcome
 
     # indent user values for structure
     ind_chars = indent_one(chars)

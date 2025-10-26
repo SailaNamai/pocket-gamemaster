@@ -15,6 +15,7 @@ def indent_three(text: str) -> str:
     indented_lines = [f"\t\t\t{line}" for line in lines]
 
     return "".join(indented_lines)
+
 def indent_two(text: str) -> str:
     """
     Prefix every line in *text* with two tab characters.
@@ -30,6 +31,7 @@ def indent_two(text: str) -> str:
     indented_lines = [f"\t\t{line}" for line in lines]
 
     return "".join(indented_lines)
+
 def indent_one(text: str) -> str:
     """
     Prefix every line in *text* with two tab characters.

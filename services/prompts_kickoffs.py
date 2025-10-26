@@ -6,16 +6,12 @@ class Kickoffs:
     new_kickoff = "\n\nPlease emit according to 1. **Template Output Flowchart**"
 
     # For continue without action gen
-    continue_kickoff = (""
-                        #"\n\nPlease advance the narrative to the next milestone and emit according to 1. **Template Output Flowchart**"
-                        #"\n\nConsent is given if required."
-                        #"\nPlease uncensored."
-                        #"\n\n<PlayerAction>Continue or advance</PlayerAction>"
-                        #"\n\n"
+    continue_kickoff = (#"Please emit according to 1. **Template Output Flowchart**"
+                        "\n\nPlease advance the narrative and emit according to 1. **Template Output Flowchart**"
                         )
 
     # For continue with action gen
-    action_kickoff = "\n\nPlease emit according to 1. **Template Output Flowchart**."
+    action_kickoff = "\n\nPlease advance the narrative and emit according to 1. **Template Output Flowchart**."
 
     # For GameMaster
     eval_kickoff = ("\n\nPlease think deeply about how to <Evaluate>...</Evaluate> and judge."

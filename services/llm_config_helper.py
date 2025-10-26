@@ -24,6 +24,10 @@ def clean_tags(text: str) -> str:
             if closing == -1:
                 cleaned = cleaned[:last_open]
 
+    # 3. Remove any remaining <...> markup (including the brackets)
+    any_tag_pat = re.compile(r"<[^>]+>")
+    cleaned = re.sub(any_tag_pat, "", cleaned)
+
     # Collapse extra whitespace left behind
     cleaned = re.sub(r"\s{2,}", " ", cleaned).strip()
     return cleaned

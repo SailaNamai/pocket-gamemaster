@@ -69,7 +69,7 @@ class Config:
     #   • Negative values make the model more comfortable staying on the same topic and re-mentioning
     #     existing entities, which can be handy for emphasis or looping back to earlier details.
     PRESENCE_PENALTY: float = 0.20
-    PRESENCE_PENALTY_CONTINUE: float = 1.42
+    PRESENCE_PENALTY_CONTINUE: float = 0.42
     PRESENCE_PENALTY_slave: float = -0.20 # for tag and eval
 
     """
@@ -121,6 +121,8 @@ class Config:
     #MODEL_PATH = BASE / "meta-llama-3.1-8b-instruct-abliterated.Q8_0.gguf" # has the context but didn't test much
 
     # Q6_K for medium hardware:
+    #MODEL_PATH = BASE / "KansenSakura-Erosion-RP-12b.Q6_K.gguf"
+    #MODEL_PATH = BASE / "WeirdCompound-v1.7-24b.Q6_K.gguf" # sadly too heavy for my hardware = slow
     MODEL_PATH = BASE / "krix-12b-model_stock-q6_k.gguf"
     #MODEL_PATH = BASE / "mlabonne.gemma-3-12b-it-abliterated-v2.Q6_K.gguf" # I haven't really figured out how to talk to these gemma things (and i won't accept the license)
     #MODEL_PATH = BASE / "NeuralDaredevil-8B-abliterated-Q6_K.gguf"
@@ -136,7 +138,7 @@ class Config:
     # needs to be adapted to the model you are planning to use (usually found somewhere on origin homepage).
     # I think that PGM might work with any llama3 based model without changing this
     # or how we trim the output, but didn't test yet
-    TEMPLATE_PATH = BASE / "krix.jinja" # Krix
+    TEMPLATE_PATH = BASE / "krix.jinja" # Krix # mistral
     #TEMPLATE_PATH = BASE / "NeuralDaredevil.jinja" # also llama-3.1 (lumimaid, dark sapling)
     #TEMPLATE_PATH = BASE / "Nous-Hermes-2.jinja"
     #TEMPLATE_PATH = BASE / "Mistral-Nemo-Instruct-2407.jinja"
@@ -160,7 +162,6 @@ class Config:
     # N_GPU_LAYERS: count of transformer layers loaded onto the GPU.
     #  • Increasing this uses more VRAM but accelerates inference.
     #  • Decreasing it frees GPU memory but shifts work to the CPU, slowing down.
-    # (default model max is 32, llama.cpp will clamp to max if you push higher)
     N_GPU_LAYERS: int = 32
 
     # How many new tokens the LLM may generate per call

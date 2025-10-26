@@ -10,6 +10,9 @@ app = Flask(__name__)
 # We do this to give the users writing style input more weight
 # Be careful, when you change it.
 # Be careful, when you change it.
+
+#The air is filled with the distant sounds of voices and the occasional burst of laughter from behind the thick walls.
+#maybe add to bad writing style: You can hear the distant sounds of voices and the occasional burst of laughter from behind the thick walls.
 def update_writing_style(user_value: str):
     hardcoded = """6. **Writing Style**:
     This section is the superior authority on everything concerning writing style.
@@ -56,7 +59,7 @@ def update_writing_style(user_value: str):
     6.2 **Writing style imperatives**:
         - Never emit <PlayerAction> or </PlayerAction>.
         - Quotes are reserved exclusively for direct speech.
-        - Always use present tense.
+        - Prefer present tense.
         - Finite verbs over the gerund.
             - When the focus is on the activity itself rather than the command (“Reading improves comprehension”), a gerund is appropriate.
         
@@ -75,7 +78,7 @@ def update_writing_style(user_value: str):
                 - Metaphors:
                     - No shallow metaphors.
                     - Varied metaphors.
-                    - Use sparingly
+                    - Use sparingly.
         
         6.2.3 Show, don't tell
             - When appropriate: Prefer direct speech.

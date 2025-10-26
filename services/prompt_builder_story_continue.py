@@ -137,15 +137,10 @@ def get_story_continue_prompts() -> Tuple[str, str]:
                     outcome_block = indent_one(r["outcome"].strip())
                     wrapped_texts.append(outcome_block)
             continue
-        """
-        if r["story_id"] == "continue_without_UserAction":
-            text = f"<Narrative>{text}</Narrative>"
-            wrapped_texts.append(text)
-        """
         wrapped_texts.append(text)
 
-    #indented_wrapped = [indent_one(text) for text in wrapped_texts]
-    recent_block = "Here is what happened recently (short term memory):\n\n" + "\n\n".join(wrapped_texts)
+    indented_wrapped = [indent_one(text) for text in wrapped_texts]
+    recent_block = "Here is what happened recently (short term memory):\n\n" + "\n\n".join(indented_wrapped)
     kickoff = Kickoffs.continue_kickoff
     indent_recent = indent_one(recent_block)
 
